@@ -31,90 +31,101 @@
 
 / {
 
-  // Activate ADJUST layer by pressing raise and lower
-  conditional_layers {
-    compatible = "zmk,conditional-layers";
-    adjust_layer {
-      if-layers = <LOWER RAISE>;
-      then-layer = <ADJUST>;
-    };
-  };
+    // Activate ADJUST layer by pressing raise and lower
 
-  keymap {
-    compatible = "zmk,keymap";
+    conditional_layers {
+        compatible = "zmk,conditional-layers";
 
-    default_layer {
-      display-name = "default";
-      // ------------------------------------------------------------------------------------------------------------
-      // |   `   |  1  |  2  |  3   |  4   |  5   |                   |  6   |  7    |  8    |  9   |   0   |   -   |
-      // |  TAB  |  Q  |  W  |  E   |  R   |  T   |                   |  Y   |  U    |  I    |  O   |   P   | \ |
-      // |  LGUI/ESC  |  A  |  S  |  D   |  F   |  G   |                   |  H   |  J    |  K    |  L   |   ;   |   '   |
-      // | SHIFT |  Z  |  X  |  C   |  V   |  B   |  MUTE  |  | PLAY  |  N   |  M    |  ,    |  .   |   /   | SHIFT/EQUAL |
-      //               | CTRL| ALT  | GUI  | LOWER/SPACE|  LCTRL/ENTER |  | RALT/BKSPC | RAISE/SPACE| GUI   | ALT   | CTRL |
-      bindings = <
-        &kp GRAVE &kp N1 &kp N2   &kp N3   &kp N4    &kp N5                           &kp N6 &kp N7    &kp N8    &kp N9   &kp N0   &kp MINUS
-        &kp TAB   &kp Q  &kp W    &kp E    &kp R     &kp T                            &kp Y  &kp U     &kp I     &kp O    &kp P    &kp BSLH
-        &mt LGUI ESC   &kp A  &kp S    &kp D    &kp F     &kp G                            &kp H  &kp J     &kp K     &kp L    &kp SEMI &kp SQT
-        &mcw LSHFT 0 &kp Z  &kp X    &kp C    &kp V     &kp B   &kp C_MUTE &kp C_PLAY    &kp N  &kp M     &kp COMMA &kp DOT  &kp FSLH &mt RSHFT EQUAL
-        &kp LCTRL &kp LALT &kp LGUI &lt LOWER SPACE  &mt LCTRL RET    &mt RALT BSPC  &lt RAISE SPACE  &kp RGUI &kp RALT  &kp RCTRL
-      >;
-
-      sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_PREV C_NEXT>;
+        adjust_layer {
+            if-layers = <3 4>;
+            then-layer = <5>;
+        };
     };
 
-    lower_layer {
-      display-name = "lower";
-      // ------------------------------------------------------------------------------------------------------------
-      // |       |  F1 |  F2 |  F3  |  F4  |  F5  |                   |  F6  |  F7   |  F8   |  F9  |  F10  |  F11  |
-      // |   `   |  1  |  2  |  3   |  4   |  5   |                   |  6   |  7    |  8    |  9   |   0   |  F12  |
-      // |   ˜   |  !  |  @  |  #   |  $   |  %   |                   |  ^   |  &    |  *    |  (   |   )   |   |   |
-      // |       |  =  |  -  |  +   |  {   |  }   |        |  |       |  [   |  ]    |  ;    |  :   |   \   |       |
-      //               |     |      |      |      |        |  |       |      |       |       |      |
-      bindings = <
-        &trans    &kp F1    &kp F2    &kp F3      &kp F4    &kp F5                    &kp F6    &kp F7   &kp F8    &kp F9    &kp F10   &kp F11
-        &kp GRAVE &kp N1    &kp N2    &kp N3      &kp N4    &kp N5                    &kp N6    &kp N7   &kp N8    &kp N9    &kp N0    &kp F12
-        &kp TILDE &kp EXCL  &kp AT    &kp HASH    &kp DLLR  &kp PRCNT                 &kp CARET &kp AMPS &kp ASTRK &kp LPAR  &kp RPAR  &kp PIPE
-        &trans    &kp EQUAL &kp MINUS &kp PLUS &kp LBRC  &kp RBRC   &trans &trans  &kp LBKT  &kp RBKT &kp SEMI  &kp COLON &kp BSLH  &trans
-        &trans    &trans      &trans    &trans     &trans &trans  &trans    &trans   &trans    &trans
-      >;
+    keymap {
+        compatible = "zmk,keymap";
 
-      sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_PREV C_NEXT>;
+        macos_layer {
+            display-name = "macos";
+
+            bindings = <
+              &kp ESC                             &kp N1          &kp N2              &kp N3    &kp N4    &kp N5                                           &kp N6     &kp N7    &kp N8     &kp N9                 &kp N0              &kp MINUS
+              &mt LA(LC(LG(LS(LEFT_SHIFT)))) TAB  &kp Q           &kp W               &kp E     &kp R     &kp T                                            &kp Y      &kp U     &kp I      &kp O                  &kp P               &kp BSLH
+              &sk LEFT_SHIFT                      &kp A           &kp S               &kp D     &kp F     &kp G                                            &kp H      &kp J     &kp K      &kp L                  &kp SEMI            &mt RIGHT_SHIFT SQT
+              &mt (LEFT_GUI) LG(SPACE)            &mt LEFT_ALT Z  &mt LEFT_CONTROL X  &kp C     &kp V     &kp B            &kp C_MUTE    &kp C_PLAY        &kp N      &kp M     &kp COMMA  &mt RIGHT_CONTROL DOT  &mt RIGHT_ALT FSLH  &mt RIGHT_GUI EQUAL
+                                                                  &kp LCTRL           &kp LALT  &kp LGUI  &lt 2 BACKSPACE  &lt 3 RET     &lt (4) LA(BSPC)  &kp SPACE  &kp RGUI  &kp RALT   &kp RCTRL
+            >;
+
+            sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_PREV C_NEXT>;
+            label = "macos";
+        };
+
+        windows_layer {
+            bindings = <
+              &kp ESC                    &trans  &trans          &trans  &trans            &trans                                   &trans  &trans             &trans  &trans             &trans  &trans
+              &trans                     &trans  &trans          &trans  &trans            &trans                                   &trans  &trans             &trans  &trans             &trans  &trans
+              &trans                     &trans  &trans          &trans  &trans            &trans                                   &trans  &trans             &trans  &trans             &trans  &trans
+              &mt LEFT_CONTROL LEFT_GUI  &trans  &mt LEFT_GUI X  &trans  &trans            &trans  &trans    &trans                 &trans  &trans             &trans  &mt RIGHT_GUI DOT  &trans  &mt RIGHT_CONTROL EQUAL
+                                   &kp LEFT_GUI    &trans  &kp LEFT_CONTROL  &trans  &trans    &lt (4) LC(BACKSPACE)  &trans  &kp RIGHT_CONTROL  &trans  &kp RIGHT_GUI
+            >;
+
+            label = "windows";
+            sensor-bindings =
+                <&inc_dec_kp C_VOL_DN C_VOL_UP>,
+                <&inc_dec_kp C_PREV C_NEXT>;
+        };
+
+        umlaute_layer {
+            bindings = <
+              &kp GRAVE  &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans    &kp DEL
+              &trans     &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &kp LBKT  &kp RBKT
+              &trans     &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans    &trans
+              &trans     &trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans    &trans
+                                &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+            >;
+
+            label = "umlaute";
+        };
+
+        num_layer {
+            display-name = "num";
+
+            bindings = <
+              &kp TILDE  &kp EXCL   &kp AT     &kp HASH  &kp DLLR  &kp PRCNT                    &kp EQUAL  &kp SLASH  &kp ASTRK  &kp BACKSPACE  &kp TAB    &trans
+              &kp CARET  &kp AMPS   &kp ASTRK  &kp LPAR  &kp RPAR  &kp UNDER                    &kp N7     &kp N8     &kp N9     &kp PLUS       &kp MINUS  &trans
+              &trans     &kp GRAVE  &kp SEMI   &kp LBKT  &kp RBKT  &kp COLON                    &kp N4     &kp N5     &kp N6     &kp RETURN     &trans     &trans
+              &trans     &trans     &trans     &kp LBRC  &kp RBRC  &trans     &trans    &trans  &kp N1     &kp N2     &kp N3     &kp COMMA      &kp DOT    &trans
+                                    &trans     &trans    &trans    &trans     &trans    &trans  &kp N0     &trans     &trans     &trans
+            >;
+
+            sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_PREV C_NEXT>;
+            label = "num";
+        };
+
+        nav_layer {
+            display-name = "nav";
+
+            bindings = <
+              &kp GRAVE  &kp F1  &kp F2  &kp F3  &kp F4  &kp F5                    &kp F6     &kp F7           &kp F8       &kp F9      &kp F10          &kp F11
+              &trans     &trans  &trans  &trans  &trans  &trans                    &kp PG_UP  &kp HOME         &kp UP       &kp END     &kp PRINTSCREEN  &kp F12
+              &trans     &trans  &trans  &trans  &trans  &trans                    &kp PG_DN  &kp LEFT         &kp DOWN     &kp RIGHT   &kp DEL          &kp BSPC
+              &trans     &trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans     &kp LC(LS(TAB))  &kp LC(TAB)  &kp C_MUTE  &kp C_VOL_DN     &kp C_VOL_UP
+                                &trans  &trans  &trans  &trans  &trans    &trans  &trans     &trans           &trans       &trans
+            >;
+
+            sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_PREV C_NEXT>;
+            label = "nav";
+        };
+
+        adjust_layer {
+            display-name = "adjust";
+            bindings = <
+            &bt BT_CLR         &bt BT_SEL 0     &bt BT_SEL 1     &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                               &none  &none  &none  &none  &kp K_LOCK  &kp C_POWER
+            &ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                            &none  &none  &none  &none  &none       &none
+            &none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                      &none  &none  &none  &none  &none       &none
+            &none              &none            &none            &none            &none            &studio_unlock   &rgb_ug RGB_TOG    &none  &none  &none  &none  &none  &none       &none
+                                                &none            &none            &none            &none            &none              &none  &none  &none  &none  &none
+            >;
+        };
     };
-
-    raise_layer {
-      display-name = "raise";
-      // ------------------------------------------------------------------------------------------------------------
-      // |       |      |      |       |       |      |                |      |      |       |      |       |       |
-      // |       | INS  | PSCR | MENU  |       |      |                | PGUP | HOME |   ^   |  END |       |       |
-      // |       | CTRL | ALT  |  GUI  | SHIFT | CAPS |                | PGDN |   <- |   v   |  ->  |  DEL  | BKSPC |
-      // |       |      |      |       |       |      |      |  |      |      |      |       |      |       |       |
-      //                |      |       |       |      |      |  |      |      |      |       |      |
-      bindings = <
-        &trans     &trans       &trans       &trans       &trans       &trans                        &trans    &trans    &trans   &trans    &trans  &trans
-        &trans     &kp INS      &kp PSCRN    &kp K_CMENU  &trans       &trans                        &kp PG_UP &kp HOME  &kp UP   &kp END   &kp N0  &trans
-        &trans     &kp LCTRL    &kp LALT     &kp LGUI     &kp LSHFT    &kp CLCK                      &kp PG_DN &kp LEFT  &kp DOWN &kp RIGHT &kp DEL &kp BSPC
-        &trans     &trans       &trans       &trans       &trans       &trans                &trans  &trans  &trans    &trans    &trans   &trans    &trans  &trans
-        &trans       &trans       &trans       &trans        &trans  &trans  &trans    &trans    &trans   &trans
-      >;
-
-      sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_PREV C_NEXT>;
-    };
-
-    adjust_layer {
-      // ----------------------------------------------------------------------------------------------------------------------------
-      // | BTCLR  |  BT1    |  BT2    |   BT3   |   BT4   |   BT5   |                  |      |      |       |      |       |       |
-      // | EXTPWR | RGB_HUD | RGB_HUI | RGB_SAD | RGB_SAI | RGB_EFF |                  |      |      |       |      |       |       |
-      // |        | RGB_BRD | RGB_BRI |         |         |         |                  |      |      |       |      |       |       |
-      // |        |         |         |         |         |STUDIO_UNLOCK| RGB_TOG | |      |      |      |       |      |       |       |
-      //                    |         |         |         |         |         | |      |      |      |       |      |
-      display-name = "adjust";
-      bindings = <
-        &bt BT_CLR        &bt BT_SEL 0    &bt BT_SEL 1    &bt BT_SEL 2    &bt BT_SEL 3    &bt BT_SEL 4                            &none &none &none &none &none &none
-        &ext_power EP_TOG &rgb_ug RGB_HUD &rgb_ug RGB_HUI &rgb_ug RGB_SAD &rgb_ug RGB_SAI &rgb_ug RGB_EFF                         &none &none &none &none &none &none
-        &none             &rgb_ug RGB_BRD &rgb_ug RGB_BRI &none           &none           &none                                   &none &none &none &none &none &none
-        &none             &none           &none           &none           &none           &studio_unlock      &rgb_ug RGB_TOG &none  &none &none &none &none &none &none
-        &none           &none           &none           &none            &none           &none  &none &none &none &none
-      >;
-    };
-  };
 };
