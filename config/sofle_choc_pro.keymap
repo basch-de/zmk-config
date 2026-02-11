@@ -26,6 +26,16 @@
       bindings = <&kp>, <&caps_word>;
       display-name = "Mod-Caps-Word";
     };
+
+    tlh: to_layer_hold {
+      compatible = "zmk,behavior-hold-tap";
+      #binding-cells = <2>;
+      flavor = "tap-preferred";
+      tapping-term-ms = <200>;
+      bindings = <&to>, <&kp>;
+      display-name = "To-Layer-Hold";
+    };
+
   };
 };
 
@@ -49,7 +59,7 @@
             display-name = "macos";
 
             bindings = <
-              &kp ESC                             &kp N1          &kp N2              &kp N3    &kp N4    &kp N5                                           &kp N6     &kp N7    &kp N8     &kp N9                 &kp N0              &kp MINUS
+              &tlh 1 ESC                          &kp N1          &kp N2              &kp N3    &kp N4    &kp N5                                           &kp N6     &kp N7    &kp N8     &kp N9                 &kp N0              &kp MINUS
               &mt LA(LC(LG(LS(LEFT_SHIFT)))) TAB  &kp Q           &kp W               &kp E     &kp R     &kp T                                            &kp Y      &kp U     &kp I      &kp O                  &kp P               &kp BSLH
               &sk LEFT_SHIFT                      &kp A           &kp S               &kp D     &kp F     &kp G                                            &kp H      &kp J     &kp K      &kp L                  &kp SEMI            &mt RIGHT_SHIFT SQT
               &mt (LEFT_GUI) LG(SPACE)            &mt LEFT_ALT Z  &mt LEFT_CONTROL X  &kp C     &kp V     &kp B            &kp C_MUTE    &kp C_PLAY        &kp N      &kp M     &kp COMMA  &mt RIGHT_CONTROL DOT  &mt RIGHT_ALT FSLH  &mt RIGHT_GUI EQUAL
@@ -62,7 +72,7 @@
 
         windows_layer {
             bindings = <
-              &kp ESC                    &trans  &trans          &trans  &trans            &trans                                   &trans  &trans             &trans  &trans             &trans  &trans
+              &tlh 0 ESC                 &trans  &trans          &trans  &trans            &trans                                   &trans  &trans             &trans  &trans             &trans  &trans
               &trans                     &trans  &trans          &trans  &trans            &trans                                   &trans  &trans             &trans  &trans             &trans  &trans
               &trans                     &trans  &trans          &trans  &trans            &trans                                   &trans  &trans             &trans  &trans             &trans  &trans
               &mt LEFT_CONTROL LEFT_GUI  &trans  &mt LEFT_GUI X  &trans  &trans            &trans  &trans    &trans                 &trans  &trans             &trans  &mt RIGHT_GUI DOT  &trans  &mt RIGHT_CONTROL EQUAL
