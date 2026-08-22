@@ -99,6 +99,8 @@
         };
 
         /* windows_layer {
+            display-name = "windows";
+
             bindings = <
                 &tlh 0 ESC       &trans  &trans      &trans  &trans     &trans                        &trans  &trans     &trans  &trans        &trans  &trans
                 &trans           &trans  &trans      &trans  &trans     &trans                        &trans  &trans     &trans  &trans        &trans  &trans
@@ -110,6 +112,8 @@
         */
 
         /* umlaute_layer {
+            display-name = "umlaute";
+
             bindings = <
                 &kp GRAVE   &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &trans    &kp DEL
                 &caps_word  &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &kp LBKT  &kp RBKT
