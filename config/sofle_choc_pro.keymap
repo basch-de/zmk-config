@@ -83,7 +83,7 @@
                 &caps_word  &kp LG(W)  &kp LA(LG(LEFT))  &kp LG(T)    &kp LA(LG(RIGHT))  &trans                   &kp PG_UP      &kp HOME       &kp UP         &kp END            &kp F11    &kp F12
                 &trans      &trans     &trans            &kp LG(TAB)  &trans             &trans                   &kp PG_DN      &kp LEFT       &kp DOWN       &kp RIGHT          &kp PSCRN  &trans
                 &trans      &kp LG(Z)  &kp LG(X)         &kp LG(C)    &kp LG(V)          &trans  &kp DEL  &trans  &kp LS(LG(O))  &kp LS(LG(M))  &kp LS(LG(H))  &kp LC(LG(SPACE))  &trans     &trans
-                                       &trans            &trans       &kp LC(LALT)       &trans  &kp RET  &trans  &trans         &trans         &trans         &trans
+                                       &trans            &trans       &kp GLOBE          &trans  &kp RET  &trans  &trans         &trans         &trans         &trans
             >;
         };
 
@@ -95,7 +95,7 @@
                 &ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                          &none  &none  &kp C_VOL_UP  &none  &none       &none
                 &none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                    &none  &none  &kp C_VOL_DN  &none  &none       &none
                 &none              &none            &none            &none            &none            &studio_unlock   &rgb_ug RGB_TOG  &none  &none  &none  &kp C_MUTE    &none  &none       &none
-                                                    &none            &none            &kp GLOBE        &none            &none            &none  &none  &none  &none         &none
+                                                    &none            &none            &none            &none            &none            &none  &none  &none  &none         &none
             >;
         };
 
