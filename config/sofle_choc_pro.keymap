@@ -64,7 +64,7 @@
         };
 
         num_layer {
-            display-name = "num";
+            display-name = "symb/num";
 
             bindings = <
                 &kp TILDE  &kp EXCL   &kp AT     &kp HASH  &kp DLLR  &kp PRCNT                  &kp EQUAL  &kp FSLH  &kp ASTRK  &kp BSPC   &kp TAB    &trans
@@ -79,10 +79,10 @@
             display-name = "nav";
 
             bindings = <
-                &kp F1      &kp F2     &kp F3            &kp F4       &kp F5             &kp F6                   &kp F7         &kp F8         &kp F9         &kp F10            &kp F11    &kp F12
-                &caps_word  &kp LG(W)  &kp LA(LG(LEFT))  &kp LG(T)    &kp LA(LG(RIGHT))  &trans                   &kp PG_UP      &kp HOME       &kp UP         &kp END            &kp PSCRN  &kp DEL
-                &trans      &trans     &trans            &kp LG(TAB)  &trans             &trans                   &kp PG_DN      &kp LEFT       &kp DOWN       &kp RIGHT          &trans     &trans
-                &trans      &kp LG(Z)  &kp LG(X)         &kp LG(C)    &kp LG(V)          &trans  &trans   &trans  &kp LS(LG(O))  &kp LS(LG(M))  &kp LS(LG(H))  &kp LC(LG(SPACE))  &trans     &trans
+                &kp ESC     &kp F1     &kp F2            &kp F3       &kp F4             &kp F5                   &kp F6         &kp F7         &kp F8         &kp F9             &kp F10    &kp DEL
+                &caps_word  &kp LG(W)  &kp LA(LG(LEFT))  &kp LG(T)    &kp LA(LG(RIGHT))  &trans                   &kp PG_UP      &kp HOME       &kp UP         &kp END            &kp F11    &kp F12
+                &trans      &trans     &trans            &kp LG(TAB)  &trans             &trans                   &kp PG_DN      &kp LEFT       &kp DOWN       &kp RIGHT          &kp PSCRN  &trans
+                &trans      &kp LG(Z)  &kp LG(X)         &kp LG(C)    &kp LG(V)          &trans  &kp DEL  &trans  &kp LS(LG(O))  &kp LS(LG(M))  &kp LS(LG(H))  &kp LC(LG(SPACE))  &trans     &trans
                                        &trans            &trans       &kp LC(LALT)       &trans  &kp RET  &trans  &trans         &trans         &trans         &trans
             >;
         };
