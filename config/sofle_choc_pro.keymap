@@ -14,6 +14,7 @@
 #define NUM 1
 #define NAV 2
 #define ADJUST 3
+#define WINDOW 4
 
 / {
     behaviors {
@@ -54,11 +55,11 @@
             display-name = "macos";
 
             bindings = <
-                &kp GRAVE                  &kp N1  &kp N2               &kp N3    &kp N4    &kp N5                                &kp N6         &kp N7    &kp N8     &kp N9     &kp N0    &kp MINUS
-                &mt LA(LC(LG(LSHFT))) TAB  &kp Q   &kp W                &kp E     &kp R     &kp T                                 &kp Y          &kp U     &kp I      &kp O      &kp P     &kp BSLH
-                &mt LGUI ESC               &kp A   &kp S                &kp D     &kp F     &kp G                                 &kp H          &kp J     &kp K      &kp L      &kp SEMI  &mt RALT SQT
-                &sk LSHFT                  &kp Z   &kp X                &kp C     &kp V     &kp B         &kp LBKT  &kp RBKT      &kp N          &kp M     &kp COMMA  &kp DOT    &kp FSLH  &mt RSHFT EQUAL
-                                                   &mt LCTRL LG(SPACE)  &kp LALT  &kp LGUI  &lt NUM BSPC  &kp RET   &kp LA(BSPC)  &lt NAV SPACE  &kp RGUI  &kp RALT   &kp RCTRL
+                &kp GRAVE                  &kp N1  &kp N2               &kp N3    &kp N4    &kp N5                                       &kp N6         &kp N7    &kp N8     &kp N9     &kp N0    &kp MINUS
+                &mt LA(LC(LG(LSHFT))) TAB  &kp Q   &kp W                &kp E     &kp R     &kp T                                        &kp Y          &kp U     &kp I      &kp O      &kp P     &kp BSLH
+                &mt LGUI ESC               &kp A   &kp S                &kp D     &kp F     &kp G                                        &kp H          &kp J     &kp K      &kp L      &kp SEMI  &mt RALT SQT
+                &sk LSHFT                  &kp Z   &kp X                &kp C     &kp V     &kp B         &kp LBKT  &kp RBKT             &kp N          &kp M     &kp COMMA  &kp DOT    &kp FSLH  &mt RSHFT EQUAL
+                                                   &mt LCTRL LG(SPACE)  &kp LALT  &kp LGUI  &lt NUM BSPC  &kp RET   &lt WINDOW LA(BSPC)  &lt NAV SPACE  &kp RGUI  &kp RALT   &kp RCTRL
             >;
         };
 
@@ -95,6 +96,18 @@
                 &none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                    &none  &none  &kp C_VOL_DN  &none  &none       &none
                 &none              &none            &none            &none            &none            &studio_unlock   &rgb_ug RGB_TOG  &none  &none  &none  &kp C_MUTE    &none  &none       &none
                                                     &none            &none            &kp GLOBE        &none            &none            &none  &none  &none  &none         &none
+            >;
+        };
+
+        window_layer {
+            display-name = "window";
+
+            bindings = <
+                &none   &none  &none   &none   &none   &none                   &kp LC(LA(U))  &kp LC(LA(I))     &none             &none              &none  &none
+                &trans  &none  &none   &none   &none   &none                   &kp LC(LA(J))  &kp LC(LA(K))     &kp LC(LA(UP))    &kp LC(LA(RET))    &none  &none
+                &trans  &none  &none   &none   &none   &none                   &none          &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &none  &trans
+                &trans  &none  &none   &none   &none   &none   &none   &none   &none          &none             &none             &none              &none  &trans
+                               &trans  &trans  &trans  &trans  &trans  &trans  &trans         &trans            &trans            &trans
             >;
         };
 
