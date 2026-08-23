@@ -91,10 +91,10 @@
             display-name = "adjust";
 
             bindings = <
-                &bt BT_CLR         &bt BT_SEL 0     &bt BT_SEL 1     &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                             &none  &none  &none         &none  &kp K_LOCK   &kp C_PWR
-                &ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                          &none  &none  &kp C_VOL_UP  &none  &none        &none
-                &none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                    &none  &none  &kp C_VOL_DN  &none  &none        &none
-                &sys_reset         &bootloader      &none            &none            &none            &studio_unlock   &rgb_ug RGB_TOG  &none  &none  &none  &kp C_MUTE    &none  &bootloader  &sys_reset
+                &bt BT_CLR         &bt BT_SEL 0     &bt BT_SEL 1     &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                             &none  &none  &none         &none  &kp LC(LG(Q))  &kp C_PWR
+                &ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                          &none  &none  &kp C_VOL_UP  &none  &none          &none
+                &none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                    &none  &none  &kp C_VOL_DN  &none  &none          &none
+                &sys_reset         &bootloader      &none            &none            &none            &studio_unlock   &rgb_ug RGB_TOG  &none  &none  &none  &kp C_MUTE    &none  &bootloader    &sys_reset
                                                     &none            &none            &none            &none            &none            &none  &none  &none  &none         &none
             >;
         };
@@ -110,31 +110,5 @@
                                &trans  &trans  &trans  &trans  &trans    &trans  &trans         &trans            &trans            &trans
             >;
         };
-
-        /* windows_layer {
-            display-name = "windows";
-
-            bindings = <
-                &tlh 0 ESC       &trans  &trans      &trans  &trans     &trans                        &trans  &trans     &trans  &trans        &trans  &trans
-                &trans           &trans  &trans      &trans  &trans     &trans                        &trans  &trans     &trans  &trans        &trans  &trans
-                &trans           &trans  &trans      &trans  &trans     &trans                        &trans  &trans     &trans  &trans        &trans  &trans
-                &mt LCTRL GRAVE  &trans  &mt LGUI X  &trans  &trans     &trans  &trans  &trans        &trans  &trans     &trans  &mt RGUI DOT  &trans  &mt RCTRL EQUAL
-                                         &kp LGUI    &trans  &kp LCTRL  &trans  &trans  &lt NUM BSPC  &trans  &kp RCTRL  &trans  &kp RGUI
-            >;
-        };
-        */
-
-        /* umlaute_layer {
-            display-name = "umlaute";
-
-            bindings = <
-                &kp GRAVE   &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &trans    &kp DEL
-                &caps_word  &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &kp LBKT  &kp RBKT
-                &trans      &trans  &trans  &trans  &trans  &trans                  &trans  &trans  &trans  &trans  &trans    &trans
-                &trans      &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans
-                                    &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-            >;
-        };
-        */
     };
 };
