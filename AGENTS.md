@@ -1,5 +1,13 @@
 # Repository instructions
 
+## Project source of truth
+
+- `config/sofle_choc_pro.keymap` is the active user keymap.
+- `boards/arm/sofle_choc_pro/sofle_choc_pro.keymap` is the stock board
+  keymap and must only be changed when explicitly requested.
+- Prefer named layer defines such as `NUM`, `NAV`, and `WINDOW` instead of
+  numeric layer references.
+
 ## Sofle keymap matrix formatting
 
 After every modification to `config/sofle_choc_pro.keymap`, format every
@@ -44,9 +52,59 @@ Visual representation:
 - Determine each logical column's width from the longest binding occupying
   that column, followed by at least two spaces.
 - Empty logical columns must still occupy their calculated horizontal space.
-- Use spaces only, never tabs.
+- Use spaces as needed for matrix-cell padding; this padding is independent
+  of the four-space structural indentation.
 - Preserve the existing five-row structure.
 - Do not use another layer as a formatting template.
 - Never change bindings, arguments, ordering, comments, or behavior merely
   to achieve alignment.
 - After editing, run `git diff --check`.
+
+## Whitespace and indentation
+
+- Use four spaces per structural indentation level.
+- Never use tabs anywhere in the file.
+- Inside `bindings = < ... >` matrices, use additional spaces as needed to
+  align logical columns.
+- Matrix alignment spaces do not need to be multiples of four.
+- Do not change binding contents merely to satisfy indentation or alignment.
+
+## Keymap and hardware constraints
+
+- The Sofle keymap currently contains five active layers and 60 physical
+  keys per layer.
+- When adding or removing a layer or physical key, also update the PDF
+  generator, its validation, and its page layout.
+- Preserve binding order and physical key positions unless the requested
+  change explicitly alters the layout.
+- This keyboard has no physical rotary encoders installed.
+- Keep the existing EC11/encoder firmware configuration unless its removal
+  is explicitly requested and the resulting firmware build is verified.
+
+## PDF generator
+
+- The PDF generator is located under `tools/keymap-pdf/`.
+- After changing the Sofle keymap or PDF generator, run
+  `./tools/keymap-pdf/generate.sh`.
+- Review every generator warning. Unknown keys or behaviors may require a
+  label, color category, or activation parser update.
+- Layer activation descriptions must be derived from the keymap and must
+  not be hard-coded.
+- Layer behaviors must use the dedicated layer color.
+- Inspect both generated preview pages for clipping, overlaps, unreadable
+  text, and incorrect physical-key placement.
+- Generated PDFs belong under `output/pdf/`.
+- Preview images and caches belong under `tmp/keymap-pdf/`.
+- Do not commit generated files from `output/` or `tmp/`.
+- The current Swift generator requires macOS frameworks. If they are not
+  available, do not report the PDF as generated or visually verified.
+
+## Verification
+
+After relevant changes:
+
+1. Run `git diff --check`.
+2. Run `./tools/keymap-pdf/generate.sh` after keymap or generator changes.
+3. Run a ZMK firmware build after keymap, board, or `.conf` changes when the
+   build environment is available.
+4. Do not report a successful build unless it was actually executed.
