@@ -4,8 +4,18 @@ import Foundation
 import PDFKit
 
 struct Layer {
+    let identifier: String
     let name: String
     let bindings: [String]
+}
+
+struct LayerActivation {
+    var holds = Set<String>()
+    var momentarySources = Set<String>()
+    var stickySources = Set<String>()
+    var toggleSources = Set<String>()
+    var switchSources = Set<String>()
+    var conditions = Set<String>()
 }
 
 struct LayoutFile: Decodable {
@@ -31,6 +41,7 @@ enum KeyKind {
     case regular
     case navigation
     case number
+    case layer
     case modifier
     case system
     case bluetooth
@@ -113,6 +124,23 @@ func parseBindings(_ source: String) -> [String] {
     }
 }
 
+func parseLayerIdentifiers(_ source: String) throws -> [Int: String] {
+    let expression = try NSRegularExpression(
+        pattern: #"(?m)^\s*#define\s+([A-Za-z_][A-Za-z0-9_]*)\s+([0-9]+)\s*$"#
+    )
+    let range = NSRange(source.startIndex..<source.endIndex, in: source)
+    var identifiers: [Int: String] = [:]
+    for match in expression.matches(in: source, range: range) {
+        guard let nameRange = Range(match.range(at: 1), in: source),
+              let numberRange = Range(match.range(at: 2), in: source),
+              let number = Int(source[numberRange]) else {
+            continue
+        }
+        identifiers[number] = String(source[nameRange])
+    }
+    return identifiers
+}
+
 func parseLayers(_ source: String) throws -> [Layer] {
     guard let keymapStart = source.range(of: "keymap {") else {
         throw GeneratorError.unexpectedLayerCount(0)
@@ -122,12 +150,14 @@ func parseLayers(_ source: String) throws -> [Layer] {
         pattern: #"display-name\s*=\s*\"([^\"]+)\"\s*;\s*bindings\s*=\s*<([\s\S]*?)>;"#
     )
     let range = NSRange(keymapSource.startIndex..<keymapSource.endIndex, in: keymapSource)
-    let layers = expression.matches(in: keymapSource, range: range).compactMap { match -> Layer? in
+    let identifiers = try parseLayerIdentifiers(source)
+    let layers = expression.matches(in: keymapSource, range: range).enumerated().compactMap { index, match -> Layer? in
         guard let nameRange = Range(match.range(at: 1), in: keymapSource),
               let bindingsRange = Range(match.range(at: 2), in: keymapSource) else {
             return nil
         }
         return Layer(
+            identifier: identifiers[index] ?? String(index),
             name: String(keymapSource[nameRange]),
             bindings: parseBindings(String(keymapSource[bindingsRange]))
         )
@@ -181,6 +211,22 @@ let modifierNames: [String: String] = [
     "LCTRL": "Ctrl", "RCTRL": "Ctrl", "LSHFT": "Shift", "RSHFT": "Shift",
 ]
 
+var unknownKeyExpressions = Set<String>()
+var fallbackBindings = Set<String>()
+var activationWarnings = Set<String>()
+
+func isFunctionKey(_ expression: String) -> Bool {
+    guard expression.first == "F",
+          let number = Int(expression.dropFirst()) else {
+        return false
+    }
+    return (1...24).contains(number)
+}
+
+func fallbackKeyName(_ expression: String) -> String {
+    expression.replacingOccurrences(of: "_", with: " ").capitalized
+}
+
 func formatKey(_ expression: String) -> String {
     if let opening = expression.firstIndex(of: "("), expression.last == ")" {
         let modifier = String(expression[..<opening])
@@ -191,11 +237,129 @@ func formatKey(_ expression: String) -> String {
         }
     }
     if let name = keyNames[expression] { return name }
-    if expression.count == 2, expression.first == "F", expression.last?.isNumber == true {
-        return expression
-    }
+    if isFunctionKey(expression) { return expression }
     if expression.count == 1 { return expression }
-    return expression.replacingOccurrences(of: "_", with: " ").capitalized
+    unknownKeyExpressions.insert(expression)
+    return fallbackKeyName(expression)
+}
+
+func resolvedLayerIdentifier(_ value: String, layers: [Layer]) -> String {
+    if let index = Int(value), layers.indices.contains(index) {
+        return layers[index].identifier
+    }
+    return value
+}
+
+func activationTexts(for layers: [Layer], source: String) throws -> [String: String] {
+    var activations = Dictionary(
+        uniqueKeysWithValues: layers.map { ($0.identifier, LayerActivation()) }
+    )
+    let identifiers = Set(layers.map(\.identifier))
+
+    func update(
+        target value: String,
+        referencedBy binding: String,
+        _ change: (inout LayerActivation, String) -> Void
+    ) {
+        let target = resolvedLayerIdentifier(value, layers: layers)
+        guard identifiers.contains(target), var activation = activations[target] else {
+            activationWarnings.insert("layer reference '\(value)' in binding '\(binding)' does not match a parsed layer")
+            return
+        }
+        change(&activation, target)
+        activations[target] = activation
+    }
+
+    for sourceLayer in layers {
+        for binding in sourceLayer.bindings {
+            let arguments = splitArguments(binding)
+            guard let behavior = arguments.first else { continue }
+            switch behavior {
+            case "&lt":
+                guard arguments.count == 3 else { continue }
+                update(target: arguments[1], referencedBy: binding) { activation, target in
+                    let tap = formatKey(arguments[2]).replacingOccurrences(of: "\n", with: " ")
+                    activation.holds.insert("Hold \(target) (tap \(tap))")
+                }
+            case "&tlh":
+                guard arguments.count == 3 else { continue }
+                update(target: arguments[1], referencedBy: binding) { activation, target in
+                    let tap = formatKey(arguments[2]).replacingOccurrences(of: "\n", with: " ")
+                    activation.holds.insert("Hold to switch to \(target) (tap \(tap))")
+                }
+            case "&mo":
+                guard arguments.count == 2 else { continue }
+                update(target: arguments[1], referencedBy: binding) { activation, _ in
+                    activation.momentarySources.insert(sourceLayer.name)
+                }
+            case "&tog":
+                guard arguments.count == 2 else { continue }
+                update(target: arguments[1], referencedBy: binding) { activation, _ in
+                    activation.toggleSources.insert(sourceLayer.name)
+                }
+            case "&sl":
+                guard arguments.count == 2 else { continue }
+                update(target: arguments[1], referencedBy: binding) { activation, _ in
+                    activation.stickySources.insert(sourceLayer.name)
+                }
+            case "&to":
+                guard arguments.count == 2 else { continue }
+                update(target: arguments[1], referencedBy: binding) { activation, _ in
+                    activation.switchSources.insert(sourceLayer.name)
+                }
+            default:
+                continue
+            }
+        }
+    }
+
+    let conditionalExpression = try NSRegularExpression(
+        pattern: #"if-layers\s*=\s*<([^>]*)>\s*;\s*then-layers?\s*=\s*<([^>]*)>\s*;"#
+    )
+    let conditionalRange = NSRange(source.startIndex..<source.endIndex, in: source)
+    for match in conditionalExpression.matches(in: source, range: conditionalRange) {
+        guard let requiredRange = Range(match.range(at: 1), in: source),
+              let targetsRange = Range(match.range(at: 2), in: source) else {
+            continue
+        }
+        let required = collapseWhitespace(String(source[requiredRange]))
+            .split(separator: " ")
+            .map { resolvedLayerIdentifier(String($0), layers: layers) }
+        let condition = required.joined(separator: " + ")
+        let targets = collapseWhitespace(String(source[targetsRange])).split(separator: " ")
+        for target in targets {
+            let description = "conditional layer \(condition) -> \(target)"
+            update(target: String(target), referencedBy: description) { activation, _ in
+                activation.conditions.insert(condition)
+            }
+        }
+    }
+
+    var texts: [String: String] = [:]
+    for (index, layer) in layers.enumerated() {
+        guard let activation = activations[layer.identifier] else { continue }
+        var parts: [String] = index == 0 ? ["Default layer"] : []
+        parts.append(contentsOf: activation.holds.sorted())
+        parts.append(contentsOf: activation.conditions.sorted().map { "Active with \($0)" })
+        if !activation.momentarySources.isEmpty {
+            parts.append("Hold from \(activation.momentarySources.sorted().joined(separator: ", "))")
+        }
+        if !activation.stickySources.isEmpty {
+            parts.append("Sticky from \(activation.stickySources.sorted().joined(separator: ", "))")
+        }
+        if !activation.toggleSources.isEmpty {
+            parts.append("Toggle lock in \(activation.toggleSources.sorted().joined(separator: ", "))")
+        }
+        if !activation.switchSources.isEmpty {
+            parts.append("Switch from \(activation.switchSources.sorted().joined(separator: ", "))")
+        }
+        if parts.isEmpty {
+            activationWarnings.insert("no activation binding found for layer '\(layer.identifier)' (\(layer.name))")
+            parts.append("No activation binding found")
+        }
+        texts[layer.identifier] = parts.joined(separator: "; ")
+    }
+    return texts
 }
 
 func wrapped(_ text: String, limit: Int = 8) -> String {
@@ -238,61 +402,99 @@ func legend(for binding: String) -> KeyLegend {
     }
     switch behavior {
     case "&none":
+        guard arguments.count == 1 else { break }
         return KeyLegend(main: "", detail: nil, kind: .disabled)
     case "&trans":
+        guard arguments.count == 1 else { break }
         return KeyLegend(main: "TRANS", detail: nil, kind: .transparent)
     case "&kp":
+        guard arguments.count >= 2 else { break }
         let key = arguments.dropFirst().joined()
         return KeyLegend(main: wrapped(formatKey(key)), detail: nil, kind: keyKind(for: key))
     case "&mt":
-        guard arguments.count >= 3 else { break }
+        guard arguments.count == 3 else { break }
         return KeyLegend(
             main: wrapped(formatKey(arguments[2])),
             detail: "hold \(wrapped(formatKey(arguments[1]), limit: 12))",
             kind: .modifier
         )
     case "&lt", "&tlh":
-        guard arguments.count >= 3 else { break }
+        guard arguments.count == 3 else { break }
         return KeyLegend(
             main: wrapped(formatKey(arguments[2])),
             detail: "hold \(arguments[1])",
-            kind: .modifier
+            kind: .layer
         )
     case "&sk":
-        return KeyLegend(main: "Sticky\n\(formatKey(arguments.last ?? "Shift"))", detail: nil, kind: .modifier)
+        guard arguments.count == 2 else { break }
+        return KeyLegend(main: "Sticky\n\(formatKey(arguments[1]))", detail: nil, kind: .modifier)
     case "&tog":
-        return KeyLegend(main: "\(arguments.last ?? "Layer")\nlock", detail: nil, kind: .modifier)
+        guard arguments.count == 2 else { break }
+        return KeyLegend(main: "\(arguments[1])\nlock", detail: nil, kind: .layer)
+    case "&mo":
+        guard arguments.count == 2 else { break }
+        return KeyLegend(main: arguments[1], detail: "hold layer", kind: .layer)
+    case "&sl":
+        guard arguments.count == 2 else { break }
+        return KeyLegend(main: arguments[1], detail: "sticky layer", kind: .layer)
+    case "&to":
+        guard arguments.count == 2 else { break }
+        return KeyLegend(main: arguments[1], detail: "switch layer", kind: .layer)
     case "&caps_word":
+        guard arguments.count == 1 else { break }
         return KeyLegend(main: "Caps\nWord", detail: nil, kind: .modifier)
     case "&bt":
-        if arguments.contains("BT_CLR") {
+        if arguments.count == 2, arguments[1] == "BT_CLR" {
             return KeyLegend(main: "BT\nclear", detail: nil, kind: .bluetooth)
         }
-        if let index = Int(arguments.last ?? "") {
+        if arguments.count == 3, arguments[1] == "BT_SEL", let index = Int(arguments[2]) {
             return KeyLegend(main: "BT \(index + 1)", detail: nil, kind: .bluetooth)
         }
-        return KeyLegend(main: "Bluetooth", detail: nil, kind: .bluetooth)
+        break
     case "&rgb_ug":
-        if arguments.last == "RGB_TOG" {
+        if arguments.count == 2, arguments[1] == "RGB_TOG" {
             return KeyLegend(main: "RGB", detail: "toggle", kind: .rgb)
         }
         let labels: [String: String] = [
             "RGB_HUD": "Hue -", "RGB_HUI": "Hue +", "RGB_SAD": "Sat -", "RGB_SAI": "Sat +",
             "RGB_BRD": "Bright -", "RGB_BRI": "Bright +", "RGB_EFF": "Effect",
         ]
-        return KeyLegend(main: wrapped(labels[arguments.last ?? ""] ?? "RGB"), detail: nil, kind: .rgb)
+        guard arguments.count == 2, let label = labels[arguments[1]] else { break }
+        return KeyLegend(main: wrapped(label), detail: nil, kind: .rgb)
     case "&ext_power":
+        guard arguments.count == 2,
+              ["EP_OFF", "EP_ON", "EP_TOG"].contains(arguments[1]) else { break }
         return KeyLegend(main: "Ext\npower", detail: nil, kind: .system)
     case "&sys_reset":
+        guard arguments.count == 1 else { break }
         return KeyLegend(main: "Reset", detail: nil, kind: .system)
     case "&bootloader":
+        guard arguments.count == 1 else { break }
         return KeyLegend(main: "Boot\nloader", detail: nil, kind: .system)
     case "&studio_unlock":
+        guard arguments.count == 1 else { break }
         return KeyLegend(main: "Studio\nunlock", detail: nil, kind: .system)
     default:
         break
     }
+    fallbackBindings.insert(binding)
     return KeyLegend(main: wrapped(behavior.dropFirst().replacingOccurrences(of: "_", with: " ").capitalized), detail: nil, kind: .regular)
+}
+
+func printWarnings() {
+    for expression in unknownKeyExpressions.sorted() {
+        let fallback = fallbackKeyName(expression).replacingOccurrences(of: "\n", with: " ")
+        let message = "warning: no explicit PDF label for key expression '\(expression)'; using '\(fallback)'\n"
+        FileHandle.standardError.write(Data(message.utf8))
+    }
+    for binding in fallbackBindings.sorted() {
+        let message = "warning: no complete PDF handler for binding '\(binding)'; using a fallback label\n"
+        FileHandle.standardError.write(Data(message.utf8))
+    }
+    for warning in activationWarnings.sorted() {
+        let message = "warning: \(warning)\n"
+        FileHandle.standardError.write(Data(message.utf8))
+    }
 }
 
 func fillColor(for kind: KeyKind) -> CGColor {
@@ -300,6 +502,7 @@ func fillColor(for kind: KeyKind) -> CGColor {
     case .regular: return color(252, 253, 255)
     case .navigation: return color(222, 238, 255)
     case .number: return color(255, 237, 207)
+    case .layer: return color(225, 230, 255)
     case .modifier: return color(239, 229, 255)
     case .system: return color(255, 222, 226)
     case .bluetooth: return color(218, 245, 239)
@@ -314,6 +517,7 @@ func strokeColor(for kind: KeyKind) -> CGColor {
     case .regular: return color(180, 192, 210)
     case .navigation: return color(82, 148, 222)
     case .number: return color(229, 144, 38)
+    case .layer: return color(83, 101, 211)
     case .modifier: return color(146, 99, 212)
     case .system: return color(226, 91, 104)
     case .bluetooth: return color(48, 167, 148)
@@ -467,18 +671,13 @@ func accentColor(for layer: String) -> CGColor {
     }
 }
 
-func activationText(for layer: String) -> String {
-    switch layer {
-    case "macos": return "Default layer"
-    case "nav/num": return "Hold NUM thumb (Backspace); optional NUM lock"
-    case "tab/nav": return "Hold NAV thumb (Space)"
-    case "adjust": return "Hold NUM + NAV"
-    case "window": return "Hold WINDOW thumb (Opt+Backspace)"
-    default: return ""
-    }
-}
-
-func drawLayerPanel(context: CGContext, layer: Layer, keys: [PhysicalKey], rect: CGRect) {
+func drawLayerPanel(
+    context: CGContext,
+    layer: Layer,
+    activationText: String,
+    keys: [PhysicalKey],
+    rect: CGRect
+) {
     let path = CGPath(roundedRect: rect, cornerWidth: 10, cornerHeight: 10, transform: nil)
     context.setFillColor(panelBackground)
     context.addPath(path)
@@ -493,7 +692,7 @@ func drawLayerPanel(context: CGContext, layer: Layer, keys: [PhysicalKey], rect:
     context.fillEllipse(in: CGRect(x: rect.minX + 14, y: rect.maxY - 28, width: 9, height: 9))
     drawText(layer.name, in: CGRect(x: rect.minX + 30, y: rect.maxY - 32, width: 145, height: 21), size: 13, weight: .bold)
     drawText(
-        activationText(for: layer.name),
+        activationText,
         in: CGRect(x: rect.minX + 178, y: rect.maxY - 31, width: rect.width - 192, height: 19),
         size: 7.4,
         weight: .medium,
@@ -530,8 +729,9 @@ func drawHeader(pageNumber: Int) {
 func drawLegend(rect: CGRect) {
     let entries: [(String, KeyKind)] = [
         ("Standard", .regular), ("Navigation", .navigation), ("Numbers", .number),
-        ("Layer / modifier", .modifier), ("System", .system), ("Bluetooth", .bluetooth),
-        ("RGB", .rgb), ("Transparent", .transparent), ("Disabled", .disabled),
+        ("Layer", .layer), ("Modifier", .modifier), ("System", .system),
+        ("Bluetooth", .bluetooth), ("RGB", .rgb), ("Transparent", .transparent),
+        ("Disabled", .disabled),
     ]
     let itemWidth = rect.width / CGFloat(entries.count)
     for (index, entry) in entries.enumerated() {
@@ -631,6 +831,7 @@ let outputURL = URL(fileURLWithPath: CommandLine.arguments[3])
 let previewURL = URL(fileURLWithPath: CommandLine.arguments[4])
 let source = try String(contentsOf: keymapURL, encoding: .utf8)
 let layers = try parseLayers(source)
+let activationLabels = try activationTexts(for: layers, source: source)
 let layoutFile = try JSONDecoder().decode(LayoutFile.self, from: Data(contentsOf: layoutURL))
 guard let layout = layoutFile.layouts["default_layout"] else { throw GeneratorError.missingLayout }
 let keys = layout.layout
@@ -644,19 +845,20 @@ guard let consumer = CGDataConsumer(url: outputURL as CFURL),
 }
 
 beginPage(context)
-drawLayerPanel(context: context, layer: layers[0], keys: keys, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232))
-drawLayerPanel(context: context, layer: layers[1], keys: keys, rect: CGRect(x: 24, y: 42, width: 386, height: 247))
-drawLayerPanel(context: context, layer: layers[2], keys: keys, rect: CGRect(x: 432, y: 42, width: 386, height: 247))
+drawLayerPanel(context: context, layer: layers[0], activationText: activationLabels[layers[0].identifier] ?? "", keys: keys, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232))
+drawLayerPanel(context: context, layer: layers[1], activationText: activationLabels[layers[1].identifier] ?? "", keys: keys, rect: CGRect(x: 24, y: 42, width: 386, height: 247))
+drawLayerPanel(context: context, layer: layers[2], activationText: activationLabels[layers[2].identifier] ?? "", keys: keys, rect: CGRect(x: 432, y: 42, width: 386, height: 247))
 drawHeader(pageNumber: 1)
 endPage(context)
 
 beginPage(context)
-drawLayerPanel(context: context, layer: layers[3], keys: keys, rect: CGRect(x: 24, y: 310, width: pageWidth - 48, height: 227))
-drawLayerPanel(context: context, layer: layers[4], keys: keys, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 212))
+drawLayerPanel(context: context, layer: layers[3], activationText: activationLabels[layers[3].identifier] ?? "", keys: keys, rect: CGRect(x: 24, y: 310, width: pageWidth - 48, height: 227))
+drawLayerPanel(context: context, layer: layers[4], activationText: activationLabels[layers[4].identifier] ?? "", keys: keys, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 212))
 drawLegend(rect: CGRect(x: 24, y: 31, width: pageWidth - 48, height: 42))
 drawHeader(pageNumber: 2)
 endPage(context)
 
+printWarnings()
 context.closePDF()
 try renderPDF(outputURL, to: previewURL, expectedLayerNames: layers.map(\.name))
 print("Created: \(outputURL.path)")
