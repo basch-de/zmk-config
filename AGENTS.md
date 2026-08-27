@@ -131,8 +131,14 @@ Visual representation:
 - Valid ZMK syntax takes precedence over limitations of the PDF parser.
 - If the generator cannot parse a valid keymap construct, improve the
   generator instead of rewriting valid keymap syntax solely for the parser.
-- The current Swift generator requires macOS frameworks. If they are not
-  available, do not report the PDF as generated or visually verified.
+- `./tools/keymap-pdf/generate.sh` is the authoritative entry point for PDF
+  generation and validation.
+- The generator uses the existing macOS Swift toolchain and requires no
+  project-local dependency installation. If the required toolchain or
+  frameworks are unavailable, do not report the PDF as generated or
+  visually verified.
+- Do not install dependencies or add alternative PDF tooling solely to
+  generate or validate the keymap PDF.
 
 ### Visual validation
 
