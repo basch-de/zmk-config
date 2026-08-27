@@ -105,8 +105,8 @@
             bindings = <
                 &none   &none  &none   &none   &none   &none                     &kp LC(LA(U))  &kp LC(LA(I))     &none             &none              &none  &none
                 &trans  &none  &none   &none   &none   &none                     &kp LC(LA(J))  &kp LC(LA(K))     &kp LC(LA(UP))    &kp LC(LA(RET))    &none  &none
-                &trans  &none  &none   &none   &none   &none                     &none          &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &none  &trans
-                &trans  &none  &none   &none   &none   &none   &tog NUM  &none   &none          &none             &none             &none              &none  &trans
+                &trans  &none  &none   &none   &none   &none                     &none          &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &none  &kp RALT
+                &trans  &none  &none   &none   &none   &none   &tog NUM  &none   &none          &none             &none             &none              &none  &kp RSHFT
                                &trans  &trans  &trans  &trans  &trans    &trans  &trans         &trans            &trans            &trans
             >;
         };
