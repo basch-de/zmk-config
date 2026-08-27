@@ -80,9 +80,9 @@
 
             bindings = <
                 &kp ESC     &kp F1     &kp F2            &kp F3       &kp F4             &kp F5                      &kp F6         &kp F7         &kp F8         &kp F9             &kp F10    &kp DEL
-                &caps_word  &kp LG(W)  &kp LA(LG(LEFT))  &kp LG(T)    &kp LA(LG(RIGHT))  &trans                      &kp PG_UP      &kp HOME       &kp UP         &kp END            &kp F11    &kp F12
-                &trans      &trans     &trans            &kp LG(TAB)  &trans             &trans                      &kp PG_DN      &kp LEFT       &kp DOWN       &kp RIGHT          &kp PSCRN  &trans
-                &trans      &kp LG(Z)  &kp LG(X)         &kp LG(C)    &kp LG(V)          &kp SPACE  &kp DEL  &trans  &kp LS(LG(O))  &kp LS(LG(M))  &kp LS(LG(H))  &kp LC(LG(SPACE))  &trans     &trans
+                &caps_word  &kp LG(W)  &kp LA(LG(LEFT))  &kp LG(T)    &kp LA(LG(RIGHT))  &none                       &kp PG_UP      &kp HOME       &kp UP         &kp END            &kp F11    &kp F12
+                &trans      &none      &none             &kp LG(TAB)  &none              &none                       &kp PG_DN      &kp LEFT       &kp DOWN       &kp RIGHT          &kp PSCRN  &kp RALT
+                &trans      &kp LG(Z)  &kp LG(X)         &kp LG(C)    &kp LG(V)          &kp SPACE  &kp DEL  &none   &kp LS(LG(O))  &kp LS(LG(M))  &kp LS(LG(H))  &kp LC(LG(SPACE))  &none      &kp RSHFT
                                        &trans            &trans       &kp GLOBE          &trans     &trans   &trans  &trans         &trans         &trans         &trans
             >;
         };
