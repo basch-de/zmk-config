@@ -418,6 +418,13 @@ func legend(for binding: String) -> KeyLegend {
             detail: "hold \(wrapped(formatKey(arguments[1]), limit: 12))",
             kind: .modifier
         )
+    case "&mcw":
+        guard arguments.count == 3 else { break }
+        return KeyLegend(
+            main: "Caps\nWord",
+            detail: "hold \(wrapped(formatKey(arguments[1]), limit: 12))",
+            kind: .modifier
+        )
     case "&lt", "&tlh":
         guard arguments.count == 3 else { break }
         return KeyLegend(
