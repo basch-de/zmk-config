@@ -91,10 +91,10 @@
             display-name = "adjust";
 
             bindings = <
-                &bt BT_CLR         &bt BT_SEL 0     &bt BT_SEL 1     &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                             &none  &none  &none         &none  &kp LC(LG(Q))  &kp C_PWR
-                &ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                          &none  &none  &kp C_VOL_UP  &none  &none          &none
-                &none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                    &none  &none  &kp C_VOL_DN  &none  &none          &none
-                &sys_reset         &bootloader      &none            &none            &none            &studio_unlock   &rgb_ug RGB_TOG  &none  &none  &none  &kp C_MUTE    &none  &bootloader    &sys_reset
+                &bt BT_CLR         &bt BT_SEL 0     &bt BT_SEL 1     &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                             &none  &none  &none         &none  &none        &none
+                &ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                          &none  &none  &kp C_VOL_UP  &none  &none        &none
+                &none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                    &none  &none  &kp C_VOL_DN  &none  &none        &none
+                &sys_reset         &bootloader      &none            &none            &none            &studio_unlock   &rgb_ug RGB_TOG  &none  &none  &none  &kp C_MUTE    &none  &bootloader  &sys_reset
                                                     &none            &none            &none            &none            &none            &none  &none  &none  &none         &none
             >;
         };
@@ -103,8 +103,8 @@
             display-name = "window";
 
             bindings = <
-                &none   &none  &none   &none   &none   &none                     &kp LC(LA(U))  &kp LC(LA(I))     &none             &none              &none  &none
-                &trans  &none  &none   &none   &none   &none                     &kp LC(LA(J))  &kp LC(LA(K))     &kp LC(LA(UP))    &kp LC(LA(RET))    &none  &none
+                &none   &none  &none   &none   &none   &none                     &kp LC(LA(U))  &kp LC(LA(I))     &none             &none              &none  &kp C_PWR
+                &trans  &none  &none   &none   &none   &none                     &kp LC(LA(J))  &kp LC(LA(K))     &kp LC(LA(UP))    &kp LC(LA(RET))    &none  &kp LC(LG(Q))
                 &trans  &none  &none   &none   &none   &none                     &none          &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &none  &kp RALT
                 &trans  &none  &none   &none   &none   &none   &tog NUM  &none   &none          &none             &none             &none              &none  &kp RSHFT
                                &trans  &trans  &trans  &trans  &trans    &trans  &trans         &trans            &trans            &trans
