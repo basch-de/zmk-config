@@ -410,6 +410,12 @@ func legend(for binding: String) -> KeyLegend {
     case "&kp":
         guard arguments.count >= 2 else { break }
         let key = arguments.dropFirst().joined()
+        if key == "LC(LS(LG(N4)))" {
+            return KeyLegend(main: "Shot\nClip", detail: nil, kind: .system)
+        }
+        if key == "LS(LG(N4))" {
+            return KeyLegend(main: "Shot\nFile", detail: nil, kind: .system)
+        }
         return KeyLegend(main: wrapped(formatKey(key)), detail: nil, kind: keyKind(for: key))
     case "&mt":
         guard arguments.count == 3 else { break }
