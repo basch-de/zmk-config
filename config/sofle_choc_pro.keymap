@@ -13,8 +13,8 @@
 #define MACOS 0
 #define NUM 1
 #define NAV 2
-#define ADJUST 3
-#define WINDOW 4
+#define WINDOW 3
+#define SYS 4
 
 / {
     behaviors {
@@ -59,15 +59,6 @@
 };
 
 / {
-    conditional_layers {
-        compatible = "zmk,conditional-layers";
-
-        adjust_layer {
-            if-layers = <NUM NAV>;
-            then-layer = <ADJUST>;
-        };
-    };
-
     keymap {
         compatible = "zmk,keymap";
 
@@ -99,23 +90,11 @@
             display-name = "tab/nav";
 
             bindings = <
-                &kp ESC  &kp F1            &kp F2            &kp F3       &kp F4             &kp F5                              &kp F6         &kp F7         &kp F8         &kp F9             &kp F10  &kp DEL
-                &trans   &kp LG(W)         &kp LA(LG(LEFT))  &kp LG(T)    &kp LA(LG(RIGHT))  &none                               &kp PG_UP      &kp LG(LEFT)   &kp UP         &kp LG(RIGHT)      &kp F11  &kp F12
-                &trans   &kp LS(LA(LEFT))  &kp LA(LEFT)      &kp LG(TAB)  &kp LA(RIGHT)      &kp LS(LA(RIGHT))                   &kp PG_DN      &kp LEFT       &kp DOWN       &kp RIGHT          &none    &kp RALT
-                &trans   &kp LG(Z)         &kp LG(X)         &kp LG(C)    &kp LG(V)          &kp SPACE          &kp DEL  &none   &kp LS(LG(O))  &kp LS(LG(M))  &kp LS(LG(H))  &kp LC(LG(SPACE))  &none    &kp RSHFT
+                &kp ESC  &kp F1            &kp F2            &kp F3       &kp F4             &kp F5                              &kp F6         &kp F7         &kp F8         &kp F9         &kp F10            &kp DEL
+                &trans   &kp LG(W)         &kp LA(LG(LEFT))  &kp LG(T)    &kp LA(LG(RIGHT))  &none                               &kp PG_UP      &kp LG(LEFT)   &kp UP         &kp LG(RIGHT)  &kp F11            &kp F12
+                &trans   &kp LS(LA(LEFT))  &kp LA(LEFT)      &kp LG(TAB)  &kp LA(RIGHT)      &kp LS(LA(RIGHT))                   &kp PG_DN      &kp LEFT       &kp DOWN       &kp RIGHT      &none              &kp RALT
+                &trans   &kp LG(Z)         &kp LG(X)         &kp LG(C)    &kp LG(V)          &kp SPACE          &kp DEL  &none   &kp LS(LG(O))  &kp LS(LG(M))  &kp LS(LG(H))  &none          &kp LC(LG(SPACE))  &kp RSHFT
                                            &trans            &trans       &kp GLOBE          &trans             &trans   &trans  &trans         &trans         &trans         &trans
-            >;
-        };
-
-        adjust_layer {
-            display-name = "adjust";
-
-            bindings = <
-                &bt BT_CLR         &bt BT_SEL 0     &bt BT_SEL 1     &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                             &none  &none  &none         &none  &none        &none
-                &ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                          &none  &none  &kp C_VOL_UP  &none  &none        &none
-                &none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                    &none  &none  &kp C_VOL_DN  &none  &none        &none
-                &sys_reset         &bootloader      &none            &none            &none            &studio_unlock   &rgb_ug RGB_TOG  &none  &none  &none  &kp C_MUTE    &none  &bootloader  &sys_reset
-                                                    &none            &none            &none            &none            &none            &none  &none  &none  &none         &none
             >;
         };
 
@@ -123,11 +102,23 @@
             display-name = "window";
 
             bindings = <
-                &none   &none  &none   &none   &none   &none                     &kp LC(LA(U))  &kp LC(LA(I))     &none             &none              &none               &kp C_PWR
-                &trans  &none  &none   &none   &none   &none                     &kp LC(LA(J))  &kp LC(LA(K))     &kp LC(LA(UP))    &kp LC(LA(RET))    &kp LC(LS(LG(N4)))  &kp LC(LG(Q))
-                &trans  &none  &none   &none   &none   &none                     &none          &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &kp LS(LG(N4))      &kp RALT
-                &trans  &none  &none   &none   &none   &none   &tog NUM  &none   &none          &none             &none             &none              &none               &kp RSHFT
-                               &trans  &trans  &trans  &trans  &trans    &trans  &trans         &trans            &trans            &trans
+                &none   &kp LC(LA(D))       &kp LC(LA(F))     &kp LC(LA(G))     &kp LC(LA(U))      &kp LC(LA(I))                      &kp LC(LA(U))  &kp LC(LA(I))     &none             &none              &none               &kp C_PWR
+                &trans  &kp LC(LS(LG(N4)))  &none             &kp LC(LA(UP))    &kp LC(LA(J))      &kp LC(LA(K))                      &kp LC(LA(J))  &kp LC(LA(K))     &kp LC(LA(UP))    &kp LC(LA(RET))    &kp LC(LS(LG(N4)))  &kp LC(LG(Q))
+                &trans  &kp LS(LG(N4))      &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &kp LC(LA(RET))                    &none          &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &kp LS(LG(N4))      &kp RALT
+                &trans  &none               &none             &none             &none              &none            &tog NUM  &none   &none          &none             &none             &none              &none               &kp RSHFT
+                                            &trans            &trans            &trans             &lt SYS BSPC     &trans    &trans  &lt SYS SPACE  &trans            &trans            &trans
+            >;
+        };
+
+        sys_layer {
+            display-name = "sys";
+
+            bindings = <
+                &bt BT_CLR         &bt BT_SEL 0     &bt BT_SEL 1     &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                             &none  &none  &none         &none  &none        &none
+                &ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                          &none  &none  &kp C_VOL_UP  &none  &none        &none
+                &none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                    &none  &none  &kp C_VOL_DN  &none  &none        &none
+                &sys_reset         &bootloader      &none            &none            &none            &studio_unlock   &rgb_ug RGB_TOG  &none  &none  &none  &kp C_MUTE    &none  &bootloader  &sys_reset
+                                                    &none            &none            &none            &none            &none            &none  &none  &none  &none         &none
             >;
         };
     };
