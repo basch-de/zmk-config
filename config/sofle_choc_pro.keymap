@@ -18,6 +18,16 @@
 
 / {
     behaviors {
+        hrm: home_row_mod {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <200>;
+            bindings = <&kp>, <&kp>;
+            display-name = "Home-Row-Mod";
+        };
+
         mcw: mod_caps_word {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
@@ -25,6 +35,16 @@
             tapping-term-ms = <200>;
             bindings = <&kp>, <&caps_word>;
             display-name = "Mod-Caps-Word";
+        };
+
+        rlt: repeatable_layer_tap {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <200>;
+            bindings = <&mo>, <&kp>;
+            display-name = "Repeatable-Layer-Tap";
         };
 
         tlh: to_layer_hold {
@@ -55,11 +75,11 @@
             display-name = "macos";
 
             bindings = <
-                &kp GRAVE                  &kp N1  &kp N2               &kp N3    &kp N4    &kp N5                                       &kp N6         &kp N7    &kp N8     &kp N9        &kp N0    &kp MINUS
-                &mt LA(LC(LG(LSHFT))) TAB  &kp Q   &kp W                &kp E     &kp R     &kp T                                        &kp Y          &kp U     &kp I      &kp O         &kp P     &kp BSLH
-                &mt LGUI ESC               &kp A   &kp S                &kp D     &kp F     &kp G                                        &kp H          &kp J     &kp K      &kp L         &kp SEMI  &mt RALT SQT
-                &sk LSHFT                  &kp Z   &kp X                &kp C     &kp V     &kp B         &kp LBKT  &kp RBKT             &kp N          &kp M     &kp COMMA  &kp DOT       &kp FSLH  &mt RSHFT EQUAL
-                                                   &mt LCTRL LG(SPACE)  &kp LALT  &kp LGUI  &lt NUM BSPC  &kp RET   &lt WINDOW LA(BSPC)  &lt NAV SPACE  &kp RGUI  &kp RALT   &mcw RCTRL 0
+                &kp GRAVE                  &kp N1       &kp N2     &kp N3        &kp N4    &kp N5                                              &kp N6          &kp N7    &kp N8        &kp N9        &kp N0          &kp MINUS
+                &mt LA(LC(LG(LSHFT))) TAB  &kp Q        &kp W      &kp E         &kp R     &kp T                                               &kp Y           &kp U     &kp I         &kp O         &kp P           &mt LA(LC(LSHFT)) BSLH
+                &mt LGUI ESC               &hrm LALT A  &kp S      &hrm LSHFT D  &kp F     &kp G                                               &kp H           &kp J     &hrm RSHFT K  &kp L         &hrm RALT SEMI  &mt RALT SQT
+                &mt LSHFT LG(SPACE)        &kp Z        &kp X      &kp C         &kp V     &kp B          &kp LBKT        &kp RBKT             &kp N           &kp M     &kp COMMA     &kp DOT       &kp FSLH        &mt RSHFT EQUAL
+                                                        &kp LCTRL  &kp LALT      &kp LGUI  &rlt NUM BSPC  &lt WINDOW RET  &lt WINDOW LA(BSPC)  &rlt NAV SPACE  &kp RGUI  &kp RALT      &kp RCTRL
             >;
         };
 
