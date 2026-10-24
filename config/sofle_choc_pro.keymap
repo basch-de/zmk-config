@@ -78,11 +78,11 @@
             display-name = "nav/num";
 
             bindings = <
-                &none   &kp LS(LA(LEFT))  &kp LA(LEFT)  &kp LA(RIGHT)  &kp LS(LA(RIGHT))  &none                         &kp EQUAL  &kp FSLH  &kp ASTRK  &kp BSPC       &kp LBRC  &kp RBRC
-                &trans  &kp DEL           &kp LG(LEFT)  &kp UP         &kp LG(RIGHT)      &kp PG_UP                     &kp N7     &kp N8    &kp N9     &kp MINUS      &kp LBKT  &kp RBKT
-                &trans  &kp BSPC          &kp LEFT      &kp DOWN       &kp RIGHT          &kp PG_DN                     &kp N4     &kp N5    &kp N6     &kp PLUS       &kp RET   &kp RALT
-                &trans  &kp LG(Z)         &kp LG(X)     &kp LG(C)      &kp LG(V)          &kp SPACE  &tog NUM  &none    &kp N1     &kp N2    &kp N3     &mt DOT COMMA  &kp RET   &kp RSHFT
-                                          &trans        &trans         &trans             &trans     &trans    &kp TAB  &kp N0     &trans    &trans     &trans
+                &caps_word  &kp LS(LA(LEFT))  &kp LA(LEFT)  &kp LA(RIGHT)  &kp LS(LA(RIGHT))  &kp CAPS                      &kp EQUAL  &kp FSLH  &kp ASTRK  &kp BSPC       &kp LBRC  &kp RBRC
+                &trans      &kp DEL           &kp LG(LEFT)  &kp UP         &kp LG(RIGHT)      &kp PG_UP                     &kp N7     &kp N8    &kp N9     &kp MINUS      &kp LBKT  &kp RBKT
+                &trans      &kp BSPC          &kp LEFT      &kp DOWN       &kp RIGHT          &kp PG_DN                     &kp N4     &kp N5    &kp N6     &kp PLUS       &kp RET   &kp RALT
+                &trans      &kp LG(Z)         &kp LG(X)     &kp LG(C)      &kp LG(V)          &kp SPACE  &tog NUM  &none    &kp N1     &kp N2    &kp N3     &mt DOT COMMA  &kp RET   &kp RSHFT
+                                              &trans        &trans         &trans             &trans     &trans    &kp TAB  &kp N0     &trans    &trans     &trans
             >;
         };
 
@@ -102,11 +102,11 @@
             display-name = "window";
 
             bindings = <
-                &none   &kp LC(LA(D))       &kp LC(LA(F))     &kp LC(LA(G))     &kp LC(LA(U))      &kp LC(LA(I))                      &kp LC(LA(U))  &kp LC(LA(I))     &none             &none              &none               &kp C_PWR
-                &trans  &kp LC(LS(LG(N4)))  &none             &kp LC(LA(UP))    &kp LC(LA(J))      &kp LC(LA(K))                      &kp LC(LA(J))  &kp LC(LA(K))     &kp LC(LA(UP))    &kp LC(LA(RET))    &kp LC(LS(LG(N4)))  &kp LC(LG(Q))
-                &trans  &kp LS(LG(N4))      &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &kp LC(LA(RET))                    &none          &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &kp LS(LG(N4))      &kp RALT
-                &trans  &none               &none             &none             &none              &none            &tog NUM  &none   &none          &none             &none             &none              &none               &kp RSHFT
-                                            &trans            &trans            &trans             &lt SYS BSPC     &trans    &trans  &lt SYS SPACE  &trans            &trans            &trans
+                &none   &kp LC(LA(D))       &kp LC(LA(F))     &kp LC(LA(G))     &kp LC(LA(U))      &kp LC(LA(I))                      &kp LC(LA(U))    &kp LC(LA(I))     &none             &none              &none               &kp C_PWR
+                &trans  &kp LC(LS(LG(N4)))  &none             &kp LC(LA(UP))    &kp LC(LA(J))      &kp LC(LA(K))                      &kp LC(LA(J))    &kp LC(LA(K))     &kp LC(LA(UP))    &kp LC(LA(RET))    &kp LC(LS(LG(N4)))  &kp LC(LG(Q))
+                &trans  &kp LS(LG(N4))      &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &kp LC(LA(RET))                    &none            &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &kp LS(LG(N4))      &kp RALT
+                &trans  &none               &none             &none             &none              &none            &tog NUM  &none   &kp LC(LA(DEL))  &none             &none             &none              &none               &kp RSHFT
+                                            &trans            &trans            &trans             &lt SYS BSPC     &trans    &trans  &lt SYS SPACE    &trans            &trans            &trans
             >;
         };
 
