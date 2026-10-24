@@ -275,7 +275,7 @@ func activationTexts(for layers: [Layer], source: String) throws -> [String: Str
             let arguments = splitArguments(binding)
             guard let behavior = arguments.first else { continue }
             switch behavior {
-            case "&lt":
+            case "&lt", "&rlt":
                 guard arguments.count == 3 else { continue }
                 update(target: arguments[1], referencedBy: binding) { activation, target in
                     let tap = formatKey(arguments[2]).replacingOccurrences(of: "\n", with: " ")
@@ -417,7 +417,7 @@ func legend(for binding: String) -> KeyLegend {
             return KeyLegend(main: "Shot\nFile", detail: nil, kind: .system)
         }
         return KeyLegend(main: wrapped(formatKey(key)), detail: nil, kind: keyKind(for: key))
-    case "&mt":
+    case "&mt", "&hrm":
         guard arguments.count == 3 else { break }
         return KeyLegend(
             main: wrapped(formatKey(arguments[2])),
@@ -431,7 +431,7 @@ func legend(for binding: String) -> KeyLegend {
             detail: "hold \(wrapped(formatKey(arguments[1]), limit: 12))",
             kind: .modifier
         )
-    case "&lt", "&tlh":
+    case "&lt", "&rlt", "&tlh":
         guard arguments.count == 3 else { break }
         return KeyLegend(
             main: wrapped(formatKey(arguments[2])),
