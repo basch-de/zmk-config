@@ -419,7 +419,7 @@ func legend(for binding: String) -> KeyLegend {
             return KeyLegend(main: "Shot\nFile", detail: nil, kind: .system)
         }
         return KeyLegend(main: wrapped(formatKey(key)), detail: nil, kind: keyKind(for: key))
-    case "&mt", "&hrm":
+    case "&mt", "&hml", "&hmr":
         guard arguments.count == 3 else { break }
         return KeyLegend(
             main: wrapped(formatKey(arguments[2])),

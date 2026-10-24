@@ -33,6 +33,9 @@
   keypad keycodes so number entry remains independent of Num Lock.
 - Do not add automatic activation for the `SYS` layer; it must not use a
   `conditional_layers` rule.
+- Preserve the separate positional home-row-mod behaviors `hml` and `hmr`.
+  Each behavior is triggered by the opposite keyboard half plus the four
+  inner thumb positions 53–56; the outer thumb positions remain excluded.
 - Preserve the matching `&tog NUM` bindings on the `WINDOW` and `NUM`
   layers; they provide the lock and unlock path for the `NUM` layer.
 - Preserve the one-handed editing row on `Z`, `X`, `C`, `V`, and `B` in the
