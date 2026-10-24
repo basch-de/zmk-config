@@ -198,6 +198,7 @@ let keyNames: [String: String] = [
     "SEMI": ";", "SQT": "'", "COMMA": ",", "DOT": ".", "LBKT": "[", "RBKT": "]",
     "LBRC": "{", "RBRC": "}",
     "TAB": "Tab", "ESC": "Esc", "BSPC": "Backspace", "DEL": "Delete", "RET": "Enter",
+    "CAPS": "Caps\nLock",
     "SPACE": "Space", "HOME": "Home", "END": "End", "UP": "Up", "DOWN": "Down",
     "LEFT": "Left", "RIGHT": "Right", "PG_UP": "Page Up", "PG_DN": "Page Down",
     "PSCRN": "Screen shot", "GLOBE": "Globe", "C_PWR": "Power", "C_MUTE": "Mute",
@@ -390,7 +391,7 @@ func keyKind(for key: String) -> KeyKind {
     if navigation.contains(key) { return .navigation }
     if numbers.contains(key) { return .number }
     if key.hasPrefix("C_") { return .system }
-    if modifierNames[key] != nil || key.contains("LG(") || key.contains("LA(") || key.contains("LC(") || key.contains("LS(") {
+    if key == "CAPS" || modifierNames[key] != nil || key.contains("LG(") || key.contains("LA(") || key.contains("LC(") || key.contains("LS(") {
         return .modifier
     }
     return .regular
