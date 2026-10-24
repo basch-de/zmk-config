@@ -16,16 +16,34 @@
 #define WINDOW 3
 #define SYS 4
 
+#define LEFT_KEYS 0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29 36 37 38 39 40 41 42
+#define RIGHT_KEYS 6 7 8 9 10 11 18 19 20 21 22 23 30 31 32 33 34 35 43 44 45 46 47 48 49
+#define INNER_THUMBS 53 54 55 56
+
 / {
     behaviors {
-        hrm: home_row_mod {
+        hml: home_row_mod_left {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             flavor = "balanced";
             tapping-term-ms = <200>;
             quick-tap-ms = <200>;
             bindings = <&kp>, <&kp>;
-            display-name = "Home-Row-Mod";
+            hold-trigger-key-positions = <RIGHT_KEYS INNER_THUMBS>;
+            hold-trigger-on-release;
+            display-name = "Home-Row-Mod-Left";
+        };
+
+        hmr: home_row_mod_right {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <200>;
+            bindings = <&kp>, <&kp>;
+            hold-trigger-key-positions = <LEFT_KEYS INNER_THUMBS>;
+            hold-trigger-on-release;
+            display-name = "Home-Row-Mod-Right";
         };
 
         mcw: mod_caps_word {
@@ -68,7 +86,7 @@
             bindings = <
                 &kp GRAVE                  &kp N1       &kp N2     &kp N3        &kp N4    &kp N5                                              &kp N6          &kp N7    &kp N8        &kp N9        &kp N0          &kp MINUS
                 &mt LA(LC(LG(LSHFT))) TAB  &kp Q        &kp W      &kp E         &kp R     &kp T                                               &kp Y           &kp U     &kp I         &kp O         &kp P           &mt LA(LC(LSHFT)) BSLH
-                &mt LGUI ESC               &hrm LALT A  &kp S      &hrm LSHFT D  &kp F     &kp G                                               &kp H           &kp J     &hrm RSHFT K  &kp L         &hrm RALT SEMI  &mt RALT SQT
+                &mt LGUI ESC               &hml LALT A  &kp S      &hml LSHFT D  &kp F     &kp G                                               &kp H           &kp J     &hmr RSHFT K  &kp L         &hmr RALT SEMI  &mt RALT SQT
                 &mt LSHFT LG(SPACE)        &kp Z        &kp X      &kp C         &kp V     &kp B          &kp LBKT        &kp RBKT             &kp N           &kp M     &kp COMMA     &kp DOT       &kp FSLH        &mt RSHFT EQUAL
                                                         &kp LCTRL  &kp LALT      &kp LGUI  &rlt NUM BSPC  &lt WINDOW RET  &lt WINDOW LA(BSPC)  &rlt NAV SPACE  &kp RGUI  &kp RALT      &kp RCTRL
             >;
