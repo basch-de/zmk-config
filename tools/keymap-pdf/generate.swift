@@ -679,7 +679,7 @@ func accentColor(for layer: String) -> CGColor {
     switch layer {
     case "nav/num": return color(219, 129, 34)
     case "tab/nav": return color(49, 112, 189)
-    case "adjust": return color(155, 74, 169)
+    case "sys": return color(155, 74, 169)
     case "window": return color(39, 143, 126)
     default: return color(54, 75, 99)
     }

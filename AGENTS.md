@@ -31,14 +31,13 @@
   half with a number pad on the right half.
 - Use regular number keycodes (`N0`–`N9`) on the `NUM` layer instead of
   keypad keycodes so number entry remains independent of Num Lock.
-- Preserve transparent bindings at the `NUM` and `NAV` thumb positions that
-  allow the conditional `ADJUST` layer to activate while both layers are
-  held.
+- Do not add automatic activation for the `SYS` layer; it must not use a
+  `conditional_layers` rule.
 - Preserve the matching `&tog NUM` bindings on the `WINDOW` and `NUM`
   layers; they provide the lock and unlock path for the `NUM` layer.
 - Preserve the one-handed editing row on `Z`, `X`, `C`, `V`, and `B` in the
   `NUM` and `NAV` layers: undo, cut, copy, paste, and Space.
-- On the `ADJUST` layer, preserve the mirrored reset and bootloader
+- On the `SYS` layer, preserve the mirrored reset and bootloader
   positions: reset on the outer keys and bootloader on the adjacent inner
   keys.
 
