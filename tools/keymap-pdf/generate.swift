@@ -196,6 +196,7 @@ let keyNames: [String: String] = [
     "N6": "6", "N7": "7", "N8": "8", "N9": "9", "N0": "0", "MINUS": "-",
     "EQUAL": "=", "PLUS": "+", "ASTRK": "*", "FSLH": "/", "BSLH": "\\",
     "SEMI": ";", "SQT": "'", "COMMA": ",", "DOT": ".", "LBKT": "[", "RBKT": "]",
+    "LBRC": "{", "RBRC": "}",
     "TAB": "Tab", "ESC": "Esc", "BSPC": "Backspace", "DEL": "Delete", "RET": "Enter",
     "SPACE": "Space", "HOME": "Home", "END": "End", "UP": "Up", "DOWN": "Down",
     "LEFT": "Left", "RIGHT": "Right", "PG_UP": "Page Up", "PG_DN": "Page Down",
