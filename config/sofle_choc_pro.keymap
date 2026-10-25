@@ -18,7 +18,7 @@
 
 #define LEFT_KEYS 0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29 36 37 38 39 40 41 42
 #define RIGHT_KEYS 6 7 8 9 10 11 18 19 20 21 22 23 30 31 32 33 34 35 43 44 45 46 47 48 49
-#define INNER_THUMBS 53 54 55 56
+#define THUMBS 52 53 54 55 56 57
 
 / {
     behaviors {
@@ -29,7 +29,7 @@
             tapping-term-ms = <280>;
             quick-tap-ms = <200>;
             bindings = <&kp>, <&kp>;
-            hold-trigger-key-positions = <RIGHT_KEYS INNER_THUMBS>;
+            hold-trigger-key-positions = <RIGHT_KEYS THUMBS>;
             hold-trigger-on-release;
             display-name = "Home-Row-Mod-Left";
         };
@@ -41,7 +41,7 @@
             tapping-term-ms = <280>;
             quick-tap-ms = <200>;
             bindings = <&kp>, <&kp>;
-            hold-trigger-key-positions = <LEFT_KEYS INNER_THUMBS>;
+            hold-trigger-key-positions = <LEFT_KEYS THUMBS>;
             hold-trigger-on-release;
             display-name = "Home-Row-Mod-Right";
         };
