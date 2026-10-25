@@ -11,21 +11,21 @@ the repository-wide instructions in the root `AGENTS.md`.
   produces a two-page PDF.
 - Do not report a Corne or Piantor PDF as generated or visually verified
   until explicit support for that keyboard has been implemented.
-- `./tools/keymap-pdf/generate.sh` is the authoritative entry point for the
-  currently supported Sofle PDF generation and validation.
+- `./tools/keymap-pdf/generate.sh [target]` is the authoritative entry point.
+  Omitting `target` defaults to `sofle_choc_pro`; currently only that target
+  is enabled.
 
 ## Inputs and outputs
 
 - `config/sofle_choc_pro.json` is the physical-layout source for the Sofle
   PDF generator and must only be changed when the physical geometry changes.
 - Generated PDFs belong under `output/pdf/`.
-- Preview images and caches belong under `tmp/keymap-pdf/`.
-- Keep the Swift module cache under `tmp/keymap-pdf/` between runs to speed
-  up subsequent PDF generation.
+- Preview images and caches belong under `tmp/keymap-pdf/<target>/`.
+- Keep each target's Swift module cache between runs to speed up subsequent
+  PDF generation.
 - Do not commit generated files from `output/` or `tmp/`.
-- Before supporting multiple keyboards, isolate their preview and cache
-  outputs so that one keyboard cannot overwrite another keyboard's
-  validation artifacts.
+- Keep preview and cache outputs isolated by target so one keyboard cannot
+  overwrite another keyboard's validation artifacts.
 
 ## Generator behavior
 

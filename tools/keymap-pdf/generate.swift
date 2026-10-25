@@ -1,5 +1,6 @@
 import AppKit
 import CoreGraphics
+import Darwin
 import Foundation
 import PDFKit
 
@@ -56,33 +57,49 @@ struct KeyLegend {
     let kind: KeyKind
 }
 
+struct LayerPanel {
+    let layerIndex: Int
+    let rect: CGRect
+}
+
+struct PageLayout {
+    let panels: [LayerPanel]
+    let showsLegend: Bool
+}
+
 enum GeneratorError: LocalizedError {
     case invalidArguments
-    case missingLayout
-    case unexpectedLayerCount(Int)
-    case unexpectedBindingCount(layer: String, count: Int)
-    case unexpectedKeyCount(Int)
+    case invalidPositiveInteger(name: String, value: String)
+    case missingLayout(String)
+    case unexpectedLayerCount(expected: Int, actual: Int)
+    case unexpectedBindingCount(layer: String, expected: Int, actual: Int)
+    case unexpectedKeyCount(expected: Int, actual: Int)
     case cannotCreatePDF
-    case invalidPDF
+    case invalidPDF(expectedPageCount: Int, actualPageCount: Int?)
     case cannotRenderPreview
     case missingText(String)
 
     var errorDescription: String? {
         switch self {
         case .invalidArguments:
-            return "Usage: generate.swift <keymap> <layout-json> <output-pdf> <preview-directory>"
-        case .missingLayout:
-            return "The JSON file has no default_layout"
-        case .unexpectedLayerCount(let count):
-            return "Expected 5 active layers, found \(count)"
-        case .unexpectedBindingCount(let layer, let count):
-            return "Expected 60 bindings in layer \(layer), found \(count)"
-        case .unexpectedKeyCount(let count):
-            return "Expected 60 physical keys, found \(count)"
+            return "Usage: generate.swift <keymap> <layout-json> <layout-name> <expected-layers> <expected-keys> <output-pdf> <preview-directory>"
+        case .invalidPositiveInteger(let name, let value):
+            return "Expected a positive integer for \(name), found '\(value)'"
+        case .missingLayout(let name):
+            return "The JSON file has no layout named \(name)"
+        case .unexpectedLayerCount(let expected, let actual):
+            return "Expected \(expected) active layers, found \(actual)"
+        case .unexpectedBindingCount(let layer, let expected, let actual):
+            return "Expected \(expected) bindings in layer \(layer), found \(actual)"
+        case .unexpectedKeyCount(let expected, let actual):
+            return "Expected \(expected) physical keys, found \(actual)"
         case .cannotCreatePDF:
             return "Could not create the PDF context"
-        case .invalidPDF:
-            return "The generated PDF is invalid or does not contain exactly two pages"
+        case .invalidPDF(let expectedPageCount, let actualPageCount):
+            if let actualPageCount {
+                return "The generated PDF contains \(actualPageCount) pages; expected \(expectedPageCount)"
+            }
+            return "The generated PDF is invalid; expected \(expectedPageCount) pages"
         case .cannotRenderPreview:
             return "Could not render a PNG preview"
         case .missingText(let value):
@@ -141,13 +158,17 @@ func parseLayerIdentifiers(_ source: String) throws -> [Int: String] {
     return identifiers
 }
 
-func parseLayers(_ source: String) throws -> [Layer] {
+func parseLayers(
+    _ source: String,
+    expectedLayerCount: Int,
+    expectedBindingCount: Int
+) throws -> [Layer] {
     guard let keymapStart = source.range(of: "keymap {") else {
-        throw GeneratorError.unexpectedLayerCount(0)
+        throw GeneratorError.unexpectedLayerCount(expected: expectedLayerCount, actual: 0)
     }
     let keymapSource = String(source[keymapStart.lowerBound...])
     let expression = try NSRegularExpression(
-        pattern: #"display-name\s*=\s*\"([^\"]+)\"\s*;\s*bindings\s*=\s*<([\s\S]*?)>;"#
+        pattern: #"display-name\s*=\s*\"([^\"]+)\"\s*;(?:\s|//[^\r\n]*(?:\r?\n|$)|/\*[\s\S]*?\*/)*bindings\s*=\s*<([\s\S]*?)>;"#
     )
     let range = NSRange(keymapSource.startIndex..<keymapSource.endIndex, in: keymapSource)
     let identifiers = try parseLayerIdentifiers(source)
@@ -162,11 +183,15 @@ func parseLayers(_ source: String) throws -> [Layer] {
             bindings: parseBindings(String(keymapSource[bindingsRange]))
         )
     }
-    guard layers.count == 5 else {
-        throw GeneratorError.unexpectedLayerCount(layers.count)
+    guard layers.count == expectedLayerCount else {
+        throw GeneratorError.unexpectedLayerCount(expected: expectedLayerCount, actual: layers.count)
     }
-    for layer in layers where layer.bindings.count != 60 {
-        throw GeneratorError.unexpectedBindingCount(layer: layer.name, count: layer.bindings.count)
+    for layer in layers where layer.bindings.count != expectedBindingCount {
+        throw GeneratorError.unexpectedBindingCount(
+            layer: layer.name,
+            expected: expectedBindingCount,
+            actual: layer.bindings.count
+        )
     }
     return layers
 }
@@ -722,8 +747,82 @@ func drawLayerPanel(
     )
 }
 
-func drawHeader(pageNumber: Int) {
-    drawText("Sofle Choc Pro BT", in: CGRect(x: 24, y: pageHeight - 39, width: 360, height: 26), size: 20, weight: .bold)
+func pageLayouts(layerCount: Int) -> [PageLayout] {
+    if layerCount == 1 {
+        return [
+            PageLayout(
+                panels: [
+                    LayerPanel(layerIndex: 0, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 455)),
+                ],
+                showsLegend: true
+            ),
+        ]
+    }
+
+    if layerCount == 2 {
+        return [
+            PageLayout(
+                panels: [
+                    LayerPanel(layerIndex: 0, rect: CGRect(x: 24, y: 310, width: pageWidth - 48, height: 227)),
+                    LayerPanel(layerIndex: 1, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 212)),
+                ],
+                showsLegend: true
+            ),
+        ]
+    }
+
+    let firstPageIsLast = layerCount == 3
+    let lowerPanelY: CGFloat = firstPageIsLast ? 82 : 42
+    let lowerPanelHeight: CGFloat = firstPageIsLast ? 207 : 247
+    var pages = [
+        PageLayout(
+            panels: [
+                LayerPanel(layerIndex: 0, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232)),
+                LayerPanel(layerIndex: 1, rect: CGRect(x: 24, y: lowerPanelY, width: 386, height: lowerPanelHeight)),
+                LayerPanel(layerIndex: 2, rect: CGRect(x: 432, y: lowerPanelY, width: 386, height: lowerPanelHeight)),
+            ],
+            showsLegend: firstPageIsLast
+        ),
+    ]
+
+    var layerIndex = 3
+    while layerIndex < layerCount {
+        let remainingLayerCount = layerCount - layerIndex
+        if remainingLayerCount == 1 {
+            pages.append(
+                PageLayout(
+                    panels: [
+                        LayerPanel(layerIndex: layerIndex, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 455)),
+                    ],
+                    showsLegend: true
+                )
+            )
+            layerIndex += 1
+        } else {
+            let isLastPage = remainingLayerCount == 2
+            pages.append(
+                PageLayout(
+                    panels: [
+                        LayerPanel(layerIndex: layerIndex, rect: CGRect(x: 24, y: 310, width: pageWidth - 48, height: 227)),
+                        LayerPanel(layerIndex: layerIndex + 1, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 212)),
+                    ],
+                    showsLegend: isLastPage
+                )
+            )
+            layerIndex += 2
+        }
+    }
+
+    return pages
+}
+
+func drawHeader(
+    keyboardName: String,
+    sourceName: String,
+    pageNumber: Int,
+    pageCount: Int
+) {
+    drawText(keyboardName, in: CGRect(x: 24, y: pageHeight - 39, width: 360, height: 26), size: 20, weight: .bold)
     drawText(
         "ZMK keymap - physical layout",
         in: CGRect(x: 390, y: pageHeight - 36, width: pageWidth - 414, height: 20),
@@ -733,7 +832,7 @@ func drawHeader(pageNumber: Int) {
         alignment: .right
     )
     drawText(
-        "Page \(pageNumber) of 2  |  Generated from config/sofle_choc_pro.keymap",
+        "Page \(pageNumber) of \(pageCount)  |  Generated from \(sourceName)",
         in: CGRect(x: 24, y: 12, width: pageWidth - 48, height: 15),
         size: 6.8,
         color: mutedInk,
@@ -783,9 +882,20 @@ func endPage(_ context: CGContext) {
     context.endPDFPage()
 }
 
-func renderPDF(_ pdfURL: URL, to directory: URL, expectedLayerNames: [String]) throws {
-    guard let document = PDFDocument(url: pdfURL), document.pageCount == 2 else {
-        throw GeneratorError.invalidPDF
+func renderPDF(
+    _ pdfURL: URL,
+    to directory: URL,
+    expectedTexts: [String],
+    expectedPageCount: Int
+) throws {
+    guard let document = PDFDocument(url: pdfURL) else {
+        throw GeneratorError.invalidPDF(expectedPageCount: expectedPageCount, actualPageCount: nil)
+    }
+    guard document.pageCount == expectedPageCount else {
+        throw GeneratorError.invalidPDF(
+            expectedPageCount: expectedPageCount,
+            actualPageCount: document.pageCount
+        )
     }
     if FileManager.default.fileExists(atPath: directory.path) {
         try FileManager.default.removeItem(at: directory)
@@ -793,7 +903,12 @@ func renderPDF(_ pdfURL: URL, to directory: URL, expectedLayerNames: [String]) t
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
 
     for pageIndex in 0..<document.pageCount {
-        guard let page = document.page(at: pageIndex) else { throw GeneratorError.invalidPDF }
+        guard let page = document.page(at: pageIndex) else {
+            throw GeneratorError.invalidPDF(
+                expectedPageCount: expectedPageCount,
+                actualPageCount: document.pageCount
+            )
+        }
         let bounds = page.bounds(for: .mediaBox)
         let scale: CGFloat = 2
         let pixelWidth = Int(bounds.width * scale)
@@ -829,51 +944,111 @@ func renderPDF(_ pdfURL: URL, to directory: URL, expectedLayerNames: [String]) t
     let extractedText = (0..<document.pageCount)
         .compactMap { document.page(at: $0)?.string }
         .joined(separator: "\n")
-    for name in expectedLayerNames where !extractedText.contains(name) {
-        throw GeneratorError.missingText(name)
+    let compactExtractedText = extractedText.filter { !$0.isWhitespace }
+    for text in expectedTexts {
+        let compactText = text.filter { !$0.isWhitespace }
+        if !extractedText.contains(text) && !compactExtractedText.contains(compactText) {
+            throw GeneratorError.missingText(text)
+        }
     }
     print("PDF pages: \(document.pageCount)")
     print("Extracted text characters: \(extractedText.count)")
 }
 
-guard CommandLine.arguments.count == 5 else {
-    throw GeneratorError.invalidArguments
+func run() throws {
+    guard CommandLine.arguments.count == 8 else {
+        throw GeneratorError.invalidArguments
+    }
+
+    let keymapURL = URL(fileURLWithPath: CommandLine.arguments[1])
+    let layoutURL = URL(fileURLWithPath: CommandLine.arguments[2])
+    let layoutName = CommandLine.arguments[3]
+    guard let expectedLayerCount = Int(CommandLine.arguments[4]), expectedLayerCount > 0 else {
+        throw GeneratorError.invalidPositiveInteger(
+            name: "expected-layers",
+            value: CommandLine.arguments[4]
+        )
+    }
+    guard let expectedKeyCount = Int(CommandLine.arguments[5]), expectedKeyCount > 0 else {
+        throw GeneratorError.invalidPositiveInteger(
+            name: "expected-keys",
+            value: CommandLine.arguments[5]
+        )
+    }
+    let outputURL = URL(fileURLWithPath: CommandLine.arguments[6])
+    let previewURL = URL(fileURLWithPath: CommandLine.arguments[7])
+    let source = try String(contentsOf: keymapURL, encoding: .utf8)
+    let layoutFile = try JSONDecoder().decode(LayoutFile.self, from: Data(contentsOf: layoutURL))
+    guard let layout = layoutFile.layouts[layoutName] else {
+        throw GeneratorError.missingLayout(layoutName)
+    }
+    let keys = layout.layout
+    guard keys.count == expectedKeyCount else {
+        throw GeneratorError.unexpectedKeyCount(expected: expectedKeyCount, actual: keys.count)
+    }
+    let layers = try parseLayers(
+        source,
+        expectedLayerCount: expectedLayerCount,
+        expectedBindingCount: keys.count
+    )
+    let activationLabels = try activationTexts(for: layers, source: source)
+    let pages = pageLayouts(layerCount: layers.count)
+    let sourceName = "config/\(keymapURL.lastPathComponent)"
+
+    try FileManager.default.createDirectory(
+        at: outputURL.deletingLastPathComponent(),
+        withIntermediateDirectories: true
+    )
+    var mediaBox = pageRect
+    guard let consumer = CGDataConsumer(url: outputURL as CFURL),
+          let context = CGContext(consumer: consumer, mediaBox: &mediaBox, nil) else {
+        throw GeneratorError.cannotCreatePDF
+    }
+
+    for (pageIndex, page) in pages.enumerated() {
+        beginPage(context)
+        for panel in page.panels {
+            let layer = layers[panel.layerIndex]
+            drawLayerPanel(
+                context: context,
+                layer: layer,
+                activationText: activationLabels[layer.identifier] ?? "",
+                keys: keys,
+                rect: panel.rect
+            )
+        }
+        if page.showsLegend {
+            drawLegend(rect: CGRect(x: 24, y: 31, width: pageWidth - 48, height: 42))
+        }
+        drawHeader(
+            keyboardName: layoutFile.name,
+            sourceName: sourceName,
+            pageNumber: pageIndex + 1,
+            pageCount: pages.count
+        )
+        endPage(context)
+    }
+
+    printWarnings()
+    context.closePDF()
+    try renderPDF(
+        outputURL,
+        to: previewURL,
+        expectedTexts: layers.map(\.name) + [
+            layoutFile.name,
+            sourceName,
+            "Page 1 of \(pages.count)",
+            "Page \(pages.count) of \(pages.count)",
+        ],
+        expectedPageCount: pages.count
+    )
+    print("Created: \(outputURL.path)")
 }
 
-let keymapURL = URL(fileURLWithPath: CommandLine.arguments[1])
-let layoutURL = URL(fileURLWithPath: CommandLine.arguments[2])
-let outputURL = URL(fileURLWithPath: CommandLine.arguments[3])
-let previewURL = URL(fileURLWithPath: CommandLine.arguments[4])
-let source = try String(contentsOf: keymapURL, encoding: .utf8)
-let layers = try parseLayers(source)
-let activationLabels = try activationTexts(for: layers, source: source)
-let layoutFile = try JSONDecoder().decode(LayoutFile.self, from: Data(contentsOf: layoutURL))
-guard let layout = layoutFile.layouts["default_layout"] else { throw GeneratorError.missingLayout }
-let keys = layout.layout
-guard keys.count == 60 else { throw GeneratorError.unexpectedKeyCount(keys.count) }
-
-try FileManager.default.createDirectory(at: outputURL.deletingLastPathComponent(), withIntermediateDirectories: true)
-var mediaBox = pageRect
-guard let consumer = CGDataConsumer(url: outputURL as CFURL),
-      let context = CGContext(consumer: consumer, mediaBox: &mediaBox, nil) else {
-    throw GeneratorError.cannotCreatePDF
+do {
+    try run()
+} catch {
+    let message = "error: \(error.localizedDescription)\n"
+    FileHandle.standardError.write(Data(message.utf8))
+    exit(EXIT_FAILURE)
 }
-
-beginPage(context)
-drawLayerPanel(context: context, layer: layers[0], activationText: activationLabels[layers[0].identifier] ?? "", keys: keys, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232))
-drawLayerPanel(context: context, layer: layers[1], activationText: activationLabels[layers[1].identifier] ?? "", keys: keys, rect: CGRect(x: 24, y: 42, width: 386, height: 247))
-drawLayerPanel(context: context, layer: layers[2], activationText: activationLabels[layers[2].identifier] ?? "", keys: keys, rect: CGRect(x: 432, y: 42, width: 386, height: 247))
-drawHeader(pageNumber: 1)
-endPage(context)
-
-beginPage(context)
-drawLayerPanel(context: context, layer: layers[3], activationText: activationLabels[layers[3].identifier] ?? "", keys: keys, rect: CGRect(x: 24, y: 310, width: pageWidth - 48, height: 227))
-drawLayerPanel(context: context, layer: layers[4], activationText: activationLabels[layers[4].identifier] ?? "", keys: keys, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 212))
-drawLegend(rect: CGRect(x: 24, y: 31, width: pageWidth - 48, height: 42))
-drawHeader(pageNumber: 2)
-endPage(context)
-
-printWarnings()
-context.closePDF()
-try renderPDF(outputURL, to: previewURL, expectedLayerNames: layers.map(\.name))
-print("Created: \(outputURL.path)")

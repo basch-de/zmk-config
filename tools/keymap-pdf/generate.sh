@@ -5,10 +5,38 @@ set -eu
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 repo_root=$(CDPATH= cd -- "$script_dir/../.." && pwd)
 
-keymap="$repo_root/config/sofle_choc_pro.keymap"
-layout="$repo_root/config/sofle_choc_pro.json"
-output="$repo_root/output/pdf/sofle_choc_pro_keymap.pdf"
-work_dir="$repo_root/tmp/keymap-pdf"
+usage() {
+    printf 'Usage: %s [sofle_choc_pro]\n' "$0" >&2
+}
+
+if [ "$#" -gt 1 ]; then
+    usage
+    exit 2
+fi
+
+target=${1:-sofle_choc_pro}
+
+case "$target" in
+    sofle_choc_pro)
+        layout_name=default_layout
+        expected_layers=5
+        expected_keys=60
+        ;;
+    corne_choc_pro)
+        printf 'Target %s is not supported by the PDF generator yet.\n' "$target" >&2
+        exit 2
+        ;;
+    *)
+        printf 'Unknown keyboard target: %s\n' "$target" >&2
+        usage
+        exit 2
+        ;;
+esac
+
+keymap="$repo_root/config/$target.keymap"
+layout="$repo_root/config/$target.json"
+output="$repo_root/output/pdf/${target}_keymap.pdf"
+work_dir="$repo_root/tmp/keymap-pdf/$target"
 preview_dir="$work_dir/rendered"
 module_cache="$work_dir/module-cache"
 
@@ -25,6 +53,9 @@ swift \
     "$script_dir/generate.swift" \
     "$keymap" \
     "$layout" \
+    "$layout_name" \
+    "$expected_layers" \
+    "$expected_keys" \
     "$output" \
     "$preview_dir"
 
