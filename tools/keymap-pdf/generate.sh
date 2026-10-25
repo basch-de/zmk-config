@@ -6,7 +6,7 @@ script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 repo_root=$(CDPATH= cd -- "$script_dir/../.." && pwd)
 
 usage() {
-    printf 'Usage: %s [sofle_choc_pro]\n' "$0" >&2
+    printf 'Usage: %s [sofle_choc_pro|corne_choc_pro|all]\n' "$0" >&2
 }
 
 if [ "$#" -gt 1 ]; then
@@ -16,15 +16,24 @@ fi
 
 target=${1:-sofle_choc_pro}
 
+if [ "$target" = all ]; then
+    "$0" sofle_choc_pro
+    "$0" corne_choc_pro
+    exit 0
+fi
+
 case "$target" in
     sofle_choc_pro)
         layout_name=default_layout
         expected_layers=5
         expected_keys=60
+        omitted_positions=
         ;;
     corne_choc_pro)
-        printf 'Target %s is not supported by the PDF generator yet.\n' "$target" >&2
-        exit 2
+        layout_name=default_layout
+        expected_layers=9
+        expected_keys=46
+        omitted_positions=6,7,20,21
         ;;
     *)
         printf 'Unknown keyboard target: %s\n' "$target" >&2
@@ -56,6 +65,7 @@ swift \
     "$layout_name" \
     "$expected_layers" \
     "$expected_keys" \
+    "$omitted_positions" \
     "$output" \
     "$preview_dir"
 

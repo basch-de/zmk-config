@@ -5,15 +5,18 @@ the repository-wide instructions in the root `AGENTS.md`.
 
 ## Current support
 
-- The generator currently supports only `config/sofle_choc_pro.keymap` with
-  `config/sofle_choc_pro.json`.
-- It currently validates exactly five active layers and 60 physical keys and
-  produces a two-page PDF.
-- Do not report a Corne or Piantor PDF as generated or visually verified
-  until explicit support for that keyboard has been implemented.
+- The generator supports `config/sofle_choc_pro.keymap` with
+  `config/sofle_choc_pro.json` and `config/corne_choc_pro.keymap` with
+  `config/corne_choc_pro.json`.
+- The Sofle target validates exactly five active layers and 60 physical keys.
+- The Corne target currently validates nine active layers and 46 firmware
+  positions. Positions 6, 7, 20, and 21 must be omitted from the drawing because
+  the target hardware's dual displays prevent switches from being fitted there.
+- Do not report a Piantor PDF as generated or visually verified until explicit
+  support for that keyboard has been implemented.
 - `./tools/keymap-pdf/generate.sh [target]` is the authoritative entry point.
-  Omitting `target` defaults to `sofle_choc_pro`; currently only that target
-  is enabled.
+  Omitting `target` defaults to `sofle_choc_pro`; `all` generates every
+  supported target.
 
 ## Inputs and outputs
 

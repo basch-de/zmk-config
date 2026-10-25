@@ -82,7 +82,7 @@ enum GeneratorError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidArguments:
-            return "Usage: generate.swift <keymap> <layout-json> <layout-name> <expected-layers> <expected-keys> <output-pdf> <preview-directory>"
+            return "Usage: generate.swift <keymap> <layout-json> <layout-name> <expected-layers> <expected-keys> <omitted-positions> <output-pdf> <preview-directory>"
         case .invalidPositiveInteger(let name, let value):
             return "Expected a positive integer for \(name), found '\(value)'"
         case .missingLayout(let name):
@@ -220,6 +220,9 @@ let keyNames: [String: String] = [
     "GRAVE": "`", "N1": "1", "N2": "2", "N3": "3", "N4": "4", "N5": "5",
     "N6": "6", "N7": "7", "N8": "8", "N9": "9", "N0": "0", "MINUS": "-",
     "EQUAL": "=", "PLUS": "+", "ASTRK": "*", "FSLH": "/", "BSLH": "\\",
+    "EXCL": "!", "AT": "@", "HASH": "#", "DLLR": "$", "PRCNT": "%",
+    "CARET": "^", "AMPS": "&", "LPAR": "(", "RPAR": ")", "UNDER": "_",
+    "PIPE": "|", "TILDE": "~",
     "SEMI": ";", "SQT": "'", "COMMA": ",", "DOT": ".", "LBKT": "[", "RBKT": "]",
     "LBRC": "{", "RBRC": "}",
     "TAB": "Tab", "ESC": "Esc", "BSPC": "Backspace", "DEL": "Delete", "RET": "Enter",
@@ -631,7 +634,13 @@ func keyCorners(_ key: PhysicalKey) -> [CGPoint] {
     ].map { transformedPoint($0, for: key) }
 }
 
-func drawKeyboard(context: CGContext, keys: [PhysicalKey], bindings: [String], in rect: CGRect) {
+func drawKeyboard(
+    context: CGContext,
+    keys: [PhysicalKey],
+    bindings: [String],
+    omittedPositions: Set<Int>,
+    in rect: CGRect
+) {
     let corners = keys.flatMap(keyCorners)
     let minX = corners.map(\.x).min() ?? 0
     let maxX = corners.map(\.x).max() ?? 14
@@ -647,6 +656,7 @@ func drawKeyboard(context: CGContext, keys: [PhysicalKey], bindings: [String], i
     let gap = max(1.2, scale * keyGapRatio)
 
     for (index, key) in keys.enumerated() {
+        if omittedPositions.contains(index) { continue }
         let width = CGFloat(key.w ?? 1) * scale - gap
         let height = CGFloat(key.h ?? 1) * scale - gap
         let transformedCenter = keyCenter(key)
@@ -716,6 +726,7 @@ func drawLayerPanel(
     layer: Layer,
     activationText: String,
     keys: [PhysicalKey],
+    omittedPositions: Set<Int>,
     rect: CGRect
 ) {
     let path = CGPath(roundedRect: rect, cornerWidth: 10, cornerHeight: 10, transform: nil)
@@ -743,6 +754,7 @@ func drawLayerPanel(
         context: context,
         keys: keys,
         bindings: layer.bindings,
+        omittedPositions: omittedPositions,
         in: CGRect(x: rect.minX + 12, y: rect.minY + 10, width: rect.width - 24, height: rect.height - 50)
     )
 }
@@ -871,6 +883,7 @@ func drawLegend(rect: CGRect) {
 
 func beginPage(_ context: CGContext) {
     context.beginPDFPage(nil)
+    context.saveGState()
     NSGraphicsContext.saveGraphicsState()
     NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
     context.setFillColor(pageBackground)
@@ -879,6 +892,7 @@ func beginPage(_ context: CGContext) {
 
 func endPage(_ context: CGContext) {
     NSGraphicsContext.restoreGraphicsState()
+    context.restoreGState()
     context.endPDFPage()
 }
 
@@ -956,7 +970,7 @@ func renderPDF(
 }
 
 func run() throws {
-    guard CommandLine.arguments.count == 8 else {
+    guard CommandLine.arguments.count == 9 else {
         throw GeneratorError.invalidArguments
     }
 
@@ -975,8 +989,13 @@ func run() throws {
             value: CommandLine.arguments[5]
         )
     }
-    let outputURL = URL(fileURLWithPath: CommandLine.arguments[6])
-    let previewURL = URL(fileURLWithPath: CommandLine.arguments[7])
+    let omittedPositions = Set(
+        CommandLine.arguments[6]
+            .split(separator: ",")
+            .compactMap { Int($0) }
+    )
+    let outputURL = URL(fileURLWithPath: CommandLine.arguments[7])
+    let previewURL = URL(fileURLWithPath: CommandLine.arguments[8])
     let source = try String(contentsOf: keymapURL, encoding: .utf8)
     let layoutFile = try JSONDecoder().decode(LayoutFile.self, from: Data(contentsOf: layoutURL))
     guard let layout = layoutFile.layouts[layoutName] else {
@@ -1014,6 +1033,7 @@ func run() throws {
                 layer: layer,
                 activationText: activationLabels[layer.identifier] ?? "",
                 keys: keys,
+                omittedPositions: omittedPositions,
                 rect: panel.rect
             )
         }

@@ -9,6 +9,8 @@ repository-wide instructions in the root `AGENTS.md`.
   `sofle_choc_pro.json` belong to the Sofle Choc Pro.
 - `corne_choc_pro.keymap`, `corne_choc_pro.conf`, and
   `corne_choc_pro.json` belong to the Corne Choc Pro.
+- `corne_choc_pro_5col.keymap`, `corne_choc_pro_5col.conf`, and
+  `corne_choc_pro_5col.json` belong to the five-column Corne Choc Pro variant.
 - `piantor_pro_bt.keymap`, `piantor_pro_bt.conf`, and
   `piantor_pro_bt.json` belong to the Piantor Pro BT.
 - Do not modify files belonging to a keyboard other than the target keyboard.
@@ -140,9 +142,12 @@ Visual representation:
   the current Sofle layout design.
 - The current Corne board definition and physical-layout JSON expose 46 key
   positions: 14 in each of rows 1 and 2, 12 in row 3, and six thumb keys.
-- Do not assume that the arriving physical keyboard uses all 46 positions.
-  Confirm whether it is the 42-key or 46-key variant before changing the key
-  count, position map, or physical-layout JSON.
+- The target hardware uses the normal six-column firmware target with dual
+  displays and no encoders. Its matrix retains all 46 firmware positions, but
+  positions 6, 7, 20, and 21 are covered by the displays and cannot be fitted
+  with switches, leaving 42 usable keys.
+- The separate `corne_choc_pro_5col` target exposes 40 positions and is not the
+  target hardware for this migration.
 - The existing nine-layer Corne keymap is a starting point, not a design
   invariant.
 - Do not migrate the Sofle keymap wholesale. Transfer behaviors and layer
@@ -176,6 +181,8 @@ Visual representation:
   layout.
 - Corne firmware changes are ultimately verified through the corresponding
   left and right GitHub Actions jobs when the user chooses to run them.
+- The Corne PDF must omit positions 6, 7, 20, and 21 from the drawing while
+  still validating all 46 firmware bindings per layer.
 
 ## Other configuration files
 
