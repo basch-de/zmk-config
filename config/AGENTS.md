@@ -169,10 +169,13 @@ Visual representation:
 - Keep the Sofle configuration read-only while the Corne is the target
   keyboard.
 
-### Current 46-position matrix
+### Matrix formatting
 
-Until the hardware variant is confirmed, preserve the current Corne binding
-shape:
+After every modification to `corne_choc_pro.keymap`, format every active and
+commented-out `bindings = < ... >` block according to the physical Corne
+matrix described below.
+
+Treat every layer as 14 logical columns:
 
 - Rows 1-2 contain 14 bindings in logical columns 1-14.
 - Row 3 contains 12 bindings in columns 1-6 and 9-14.
@@ -187,6 +190,11 @@ Visual representation:
 01 02 03 04 05 06       09 10 11 12 13 14
          04 05 06       09 10 11
 ```
+
+- Positions 6, 7, 20, and 21 still occupy logical columns 7-8 in rows 1-2
+  even though the displays prevent physical switches from being fitted there.
+- Positions 6, 7, 20, and 21 must use `&none` on every active layer.
+- Apply the shared matrix-alignment rules independently to each layer.
 
 ### Verification
 
