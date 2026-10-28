@@ -133,6 +133,18 @@ func collapseWhitespace(_ value: String) -> String {
     value.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
 }
 
+func removingComments(from source: String) throws -> String {
+    let expression = try NSRegularExpression(
+        pattern: #"/\*[\s\S]*?\*/|//[^\r\n]*"#
+    )
+    let range = NSRange(source.startIndex..<source.endIndex, in: source)
+    return expression.stringByReplacingMatches(
+        in: source,
+        range: range,
+        withTemplate: ""
+    )
+}
+
 func parseBindings(_ source: String) -> [String] {
     let matches = source.indices.filter { source[$0] == "&" }
     return matches.enumerated().map { index, start in
@@ -230,6 +242,7 @@ let keyNames: [String: String] = [
     "SPACE": "Space", "HOME": "Home", "END": "End", "UP": "Up", "DOWN": "Down",
     "LEFT": "Left", "RIGHT": "Right", "PG_UP": "Page Up", "PG_DN": "Page Down",
     "PSCRN": "Screen shot", "GLOBE": "Globe", "C_PWR": "Power", "C_MUTE": "Mute",
+    "C_VOICE_COMMAND": "Dictation",
     "C_VOL_UP": "Vol\n+", "C_VOL_DN": "Vol\n-", "LGUI": "Cmd", "RGUI": "Cmd",
     "LALT": "Opt", "RALT": "Opt", "LCTRL": "Ctrl", "RCTRL": "Ctrl",
     "LSHFT": "Shift", "RSHFT": "Shift",
@@ -713,8 +726,10 @@ func drawKeyboard(
 
 func accentColor(for layer: String) -> CGColor {
     switch layer {
-    case "nav/num": return color(219, 129, 34)
-    case "tab/nav": return color(49, 112, 189)
+    case "num": return color(219, 129, 34)
+    case "lnav": return color(49, 112, 189)
+    case "fn/sym": return color(49, 112, 189)
+    case "short": return color(190, 76, 105)
     case "sys": return color(155, 74, 169)
     case "window": return color(39, 143, 126)
     default: return color(54, 75, 99)
@@ -777,6 +792,54 @@ func pageLayouts(layerCount: Int) -> [PageLayout] {
                 panels: [
                     LayerPanel(layerIndex: 0, rect: CGRect(x: 24, y: 310, width: pageWidth - 48, height: 227)),
                     LayerPanel(layerIndex: 1, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 212)),
+                ],
+                showsLegend: true
+            ),
+        ]
+    }
+
+    if layerCount == 7 {
+        return [
+            PageLayout(
+                panels: [
+                    LayerPanel(layerIndex: 0, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232)),
+                    LayerPanel(layerIndex: 1, rect: CGRect(x: 24, y: 42, width: 386, height: 247)),
+                    LayerPanel(layerIndex: 2, rect: CGRect(x: 432, y: 42, width: 386, height: 247)),
+                ],
+                showsLegend: false
+            ),
+            PageLayout(
+                panels: [
+                    LayerPanel(layerIndex: 3, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232)),
+                    LayerPanel(layerIndex: 4, rect: CGRect(x: 24, y: 82, width: 386, height: 207)),
+                    LayerPanel(layerIndex: 5, rect: CGRect(x: 432, y: 82, width: 386, height: 207)),
+                ],
+                showsLegend: false
+            ),
+            PageLayout(
+                panels: [
+                    LayerPanel(layerIndex: 6, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 455)),
+                ],
+                showsLegend: true
+            ),
+        ]
+    }
+
+    if layerCount == 6 {
+        return [
+            PageLayout(
+                panels: [
+                    LayerPanel(layerIndex: 0, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232)),
+                    LayerPanel(layerIndex: 1, rect: CGRect(x: 24, y: 42, width: 386, height: 247)),
+                    LayerPanel(layerIndex: 2, rect: CGRect(x: 432, y: 42, width: 386, height: 247)),
+                ],
+                showsLegend: false
+            ),
+            PageLayout(
+                panels: [
+                    LayerPanel(layerIndex: 3, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232)),
+                    LayerPanel(layerIndex: 4, rect: CGRect(x: 24, y: 82, width: 386, height: 207)),
+                    LayerPanel(layerIndex: 5, rect: CGRect(x: 432, y: 82, width: 386, height: 207)),
                 ],
                 showsLegend: true
             ),
@@ -997,6 +1060,7 @@ func run() throws {
     let outputURL = URL(fileURLWithPath: CommandLine.arguments[7])
     let previewURL = URL(fileURLWithPath: CommandLine.arguments[8])
     let source = try String(contentsOf: keymapURL, encoding: .utf8)
+    let uncommentedSource = try removingComments(from: source)
     let layoutFile = try JSONDecoder().decode(LayoutFile.self, from: Data(contentsOf: layoutURL))
     guard let layout = layoutFile.layouts[layoutName] else {
         throw GeneratorError.missingLayout(layoutName)
@@ -1006,11 +1070,11 @@ func run() throws {
         throw GeneratorError.unexpectedKeyCount(expected: expectedKeyCount, actual: keys.count)
     }
     let layers = try parseLayers(
-        source,
+        uncommentedSource,
         expectedLayerCount: expectedLayerCount,
         expectedBindingCount: keys.count
     )
-    let activationLabels = try activationTexts(for: layers, source: source)
+    let activationLabels = try activationTexts(for: layers, source: uncommentedSource)
     let pages = pageLayouts(layerCount: layers.count)
     let sourceName = "config/\(keymapURL.lastPathComponent)"
 

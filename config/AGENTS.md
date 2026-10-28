@@ -62,24 +62,38 @@ repository-wide instructions in the root `AGENTS.md`.
 ### Layers and physical positions
 
 - This is the active Sofle user keymap.
-- The keymap contains five active layers and 60 physical keys per layer.
+- The keymap contains seven active layers and 60 physical keys per layer.
 
 ### Layout design invariants
 
-- The `NUM` layer intentionally combines one-handed navigation on the left
-  half with a number pad on the right half.
+- The `LNAV` layer provides one-handed navigation on the left half. Its
+  right half is disabled except for explicit right-side modifiers on the
+  home row; its outer column is disabled and its six inner thumb bindings
+  remain transparent.
+- The separate `NUM` layer contains the number pad on the right half. Its left
+  half is disabled except for explicit left-side home-row modifiers; its three
+  used left thumb positions remain transparent.
 - Use regular number keycodes (`N0`-`N9`) on the `NUM` layer instead of keypad
   keycodes so number entry remains independent of Num Lock.
+- The `SHORT` layer contains operating-system and application shortcuts. It is
+  activated from the lower-left base-layer key, which sends `Cmd+Space` when
+  tapped. Keep `FN_SYM` focused on function keys, brackets, and modifiers.
 - Do not add automatic activation for the `SYS` layer; it must not use a
   `conditional_layers` rule.
 - Preserve the separate positional home-row-mod behaviors `hml` and `hmr`.
   Each behavior is triggered by the opposite keyboard half plus the six used
   middle thumb positions 52-57. The four outer physical thumb positions 50,
-  51, 58, and 59 remain excluded.
-- Preserve the matching `&tog NUM` bindings on the `WINDOW` and `NUM` layers;
+  51, 58, and 59 remain excluded and use `&none` on every layer.
+- Preserve the matching `&tog NUM` bindings on the `FN_SYM` and `NUM` layers;
   they provide the lock and unlock path for the `NUM` layer.
-- Preserve the one-handed editing row on `Z`, `X`, `C`, `V`, and `B` in the
-  `NUM` and `NAV` layers: undo, cut, copy, paste, and Space.
+- Preserve the one-handed editing row on the outer lower key and `Z`, `X`,
+  `C`, `V`, and `B` in the `LNAV` layer: redo, undo, cut, copy, paste, and
+  Space.
+- Preserve the commented-out `nav_backup_layer` and `rnav_layer` at the end of
+  the keymap as inactive references while the navigation layers are being
+  redesigned. Neither may receive a layer define or activation binding. The
+  `rnav_layer` mirrors `LNAV` onto the right hand while preserving the spatial
+  meaning of left, right, up, and down.
 - On the `SYS` layer, preserve the mirrored reset and bootloader positions:
   reset on the outer keys and bootloader on the adjacent inner keys.
 

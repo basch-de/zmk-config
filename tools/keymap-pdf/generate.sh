@@ -25,7 +25,7 @@ fi
 case "$target" in
     sofle_choc_pro)
         layout_name=default_layout
-        expected_layers=5
+        expected_layers=7
         expected_keys=60
         omitted_positions=
         ;;
