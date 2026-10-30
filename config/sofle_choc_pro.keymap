@@ -11,7 +11,7 @@
 #include <dt-bindings/zmk/ext_power.h>
 
 #define MACOS 0
-#define LNAV 1
+#define NAV 1
 #define FN_SYM 2
 #define WINDOW 3
 #define NUM 4
@@ -86,23 +86,23 @@
             display-name = "macos";
 
             bindings = <
-                &kp GRAVE                  &kp N1        &kp N2       &kp N3       &kp N4            &kp N5                                               &kp N6             &kp N7        &kp N8       &kp N9       &kp N0           &kp MINUS
-                &mt LA(LC(LG(LSHFT))) TAB  &kp Q         &kp W        &kp E        &kp R             &kp T                                                &kp Y              &kp U         &kp I        &kp O        &kp P            &mt LA(LC(LSHFT)) BSLH
-                &mt LGUI ESC               &hml LCTRL A  &hml LALT S  &hml LGUI D  &hml LSHFT F      &kp G                                                &kp H              &hmr RSHFT J  &hmr RGUI K  &hmr RALT L  &hmr RCTRL SEMI  &mt RALT SQT
-                &lt SHORT LG(SPACE)        &kp Z         &kp X        &kp C        &kp V             &kp B           &kp LBKT        &kp RBKT             &kp N              &kp M         &kp COMMA    &kp DOT      &kp FSLH         &mt RSHFT EQUAL
-                                                         &none        &none        &rlt FN_SYM TAB   &rlt LNAV BSPC  &lt WINDOW RET  &lt WINDOW LA(BSPC)  &rlt FN_SYM SPACE  &rlt NUM ESC  &none        &none
+                &kp GRAVE                  &kp N1        &kp N2       &kp N3       &kp N4        &kp N5                                          &kp N6           &kp N7           &kp N8       &kp N9       &kp N0           &kp MINUS
+                &mt LA(LC(LG(LSHFT))) TAB  &kp Q         &kp W        &kp E        &kp R         &kp T                                           &kp Y            &kp U            &kp I        &kp O        &kp P            &mt LA(LC(LSHFT)) BSLH
+                &mt LGUI ESC               &hml LCTRL A  &hml LGUI S  &hml LALT D  &hml LSHFT F  &kp G                                           &kp H            &hmr RSHFT J     &hmr RALT K  &hmr RGUI L  &hmr RCTRL SEMI  &kp SQT
+                &lt SHORT LG(SPACE)        &kp Z         &kp X        &kp C        &kp V         &kp B         &kp LBKT          &kp RBKT        &kp N            &kp M            &kp COMMA    &kp DOT      &kp FSLH         &kp EQUAL
+                                                         &none        &none        &rlt NUM ESC  &lt NAV RET   &rlt WINDOW BSPC  &rlt NUM SPACE  &rlt FN_SYM RET  &rlt SHORT TAB   &none        &none
             >;
         };
 
-        lnav_layer {
-            display-name = "lnav";
+        nav_layer {
+            display-name = "nav";
 
             bindings = <
-                &none          &kp LS(LA(LEFT))  &kp LA(LEFT)  &kp LG(A)  &kp LA(RIGHT)  &kp LS(LA(RIGHT))                  &none   &none      &none     &none     &none      &none
-                &kp DEL        &none             &kp LG(LEFT)  &kp UP     &kp LG(RIGHT)  &kp PG_UP                          &none   &none      &none     &none     &none      &none
-                &kp BSPC       &kp LSHFT         &kp LEFT      &kp DOWN   &kp RIGHT      &kp PG_DN                          &none   &kp RSHFT  &kp RGUI  &kp RALT  &kp RCTRL  &none
-                &kp LS(LG(Z))  &kp LG(Z)         &kp LG(X)     &kp LG(C)  &kp LG(V)      &kp SPACE          &none   &none   &none   &none      &none     &none     &none      &none
-                                                 &none         &none      &trans         &trans             &trans  &trans  &trans  &trans     &none     &none
+                &none          &none      &none             &none      &none              &none                      &none      &none             &none          &none          &none              &none
+                &none          &kp LG(W)  &kp LA(LG(LEFT))  &kp LG(T)  &kp LA(LG(RIGHT))  &none                      &kp PG_UP  &kp LG(LEFT)      &kp LG(RIGHT)  &none          &none              &kp DEL
+                &none          &kp LCTRL  &kp LGUI          &kp LALT   &kp LSHFT          &none                      &kp PG_DN  &kp LEFT          &kp DOWN       &kp UP         &kp RIGHT          &kp BSPC
+                &kp LS(LG(Z))  &kp LG(Z)  &kp LG(X)         &kp LG(C)  &kp LG(V)          &kp SPACE  &none   &none   &kp LG(A)  &kp LS(LA(LEFT))  &kp LA(LEFT)   &kp LA(RIGHT)  &kp LS(LA(RIGHT))  &none
+                                          &none             &none      &trans             &trans     &trans  &trans  &trans     &trans            &none          &none
             >;
         };
 
@@ -110,11 +110,11 @@
             display-name = "fn/sym";
 
             bindings = <
-                &none  &kp F1     &kp F2    &kp F3    &kp F4     &kp F5                  &kp F6  &kp F7    &kp F8    &kp F9  &kp F10  &none
-                &none  &kp F11    &kp F12   &none     &none      &none                   &none   &kp LBRC  &kp RBRC  &none   &none    &none
-                &none  &kp LCTRL  &kp LALT  &kp LGUI  &kp LSHFT  &none                   &none   &kp LBKT  &kp RBKT  &none   &none    &none
-                &none  &none      &none     &none     &none      &none   &tog NUM  &none   &none   &none     &none     &none   &none    &none
-                                  &none     &none     &trans     &trans  &trans  &trans  &trans  &trans    &none     &none
+                &none  &kp F1     &kp F2    &kp F3    &kp F4     &kp F5                    &kp F6  &kp F7    &kp F8    &kp F9  &kp F10  &none
+                &none  &kp F11    &kp F12   &none     &none      &none                     &none   &kp LBRC  &kp RBRC  &none   &none    &none
+                &none  &kp LCTRL  &kp LGUI  &kp LALT  &kp LSHFT  &none                     &none   &kp LBKT  &kp RBKT  &none   &none    &none
+                &none  &none      &none     &none     &none      &tog NUM  &none   &none   &none   &none     &none     &none   &none    &none
+                                  &none     &none     &trans     &trans    &trans  &trans  &trans  &trans    &none     &none
             >;
         };
 
@@ -122,11 +122,11 @@
             display-name = "window";
 
             bindings = <
-                &none   &kp LC(LA(D))  &kp LC(LA(F))     &kp LC(LA(G))     &kp LC(LA(U))      &kp LC(LA(I))                      &kp LC(LA(U))    &kp LC(LA(I))     &none             &none              &none  &none
-                &none   &none          &none             &kp LC(LA(UP))    &kp LC(LA(J))      &kp LC(LA(K))                      &kp LC(LA(J))    &kp LC(LA(K))     &kp LC(LA(UP))    &kp LC(LA(RET))    &none  &none
-                &none   &none          &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &kp LC(LA(RET))                    &none            &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(RIGHT))  &none  &none
-                &none   &kp LG(W)      &kp LA(LG(LEFT))  &kp LG(T)         &kp LA(LG(RIGHT))  &none            &none   &none   &kp LC(LA(DEL))  &none             &none             &none              &none  &none
-                                       &none             &none             &trans             &lt SYS BSPC     &trans    &trans  &lt SYS SPACE    &trans            &none             &none
+                &none  &none             &none             &none           &none              &none                             &none            &none             &none             &none           &none              &none
+                &none  &kp LC(LA(D))     &kp LC(LA(F))     &kp LC(LA(G))   &kp LC(LA(U))      &kp LC(LA(I))                     &kp LC(LA(U))    &kp LC(LA(I))     &kp LC(LA(D))     &kp LC(LA(F))   &kp LC(LA(G))      &none
+                &none  &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(UP))  &kp LC(LA(RIGHT))  &kp LC(LA(RET))                   &kp LC(LA(RET))  &kp LC(LA(LEFT))  &kp LC(LA(DOWN))  &kp LC(LA(UP))  &kp LC(LA(RIGHT))  &none
+                &none  &kp LC(LA(E))     &kp LC(LA(R))     &kp LC(LA(T))   &kp LC(LA(J))      &kp LC(LA(K))    &none   &none    &kp LC(LA(J))    &kp LC(LA(K))     &kp LC(LA(E))     &kp LC(LA(R))   &kp LC(LA(T))      &none
+                                         &none             &none           &trans             &trans           &trans  &mo SYS  &trans           &trans            &none             &none
             >;
         };
 
@@ -134,11 +134,11 @@
             display-name = "num";
 
             bindings = <
-                &none  &none      &none     &none     &none      &none                      &kp EQUAL  &kp FSLH  &kp ASTRK  &kp BSPC       &none     &none
-                &none  &none      &none     &none     &none      &none                      &kp N7     &kp N8    &kp N9     &kp MINUS      &none     &none
-                &none  &kp LCTRL  &kp LALT  &kp LGUI  &kp LSHFT  &none                      &kp N4     &kp N5    &kp N6     &kp PLUS       &kp RET   &none
-                &none  &none      &none     &none     &none      &none   &tog NUM  &none    &kp N1     &kp N2    &kp N3     &mt DOT COMMA  &kp RET   &none
-                                  &none     &none     &trans     &trans  &trans    &kp TAB  &kp N0     &trans    &none      &none
+                &none  &none      &none     &none     &none      &none                     &kp EQUAL  &kp FSLH  &kp ASTRK  &kp LS(SEMI)   &kp BSPC  &none
+                &none  &none      &none     &none     &none      &none                     &kp N7     &kp N8    &kp N9     &kp MINUS      &kp TAB   &none
+                &none  &kp LCTRL  &kp LGUI  &kp LALT  &kp LSHFT  &none                     &kp N4     &kp N5    &kp N6     &kp PLUS       &kp RET   &none
+                &none  &none      &none     &none     &none      &tog NUM  &none   &none   &kp N1     &kp N2    &kp N3     &mt DOT COMMA  &kp RET   &none
+                                  &none     &none     &trans     &trans    &trans  &trans  &kp N0     &trans    &none      &none
             >;
         };
 
@@ -146,11 +146,11 @@
             display-name = "short";
 
             bindings = <
-                &none  &none      &none                &none              &none         &none                &none          &none          &none  &none          &none  &kp C_PWR
-                &none  &none      &kp C_MUTE           &kp C_VOL_DN       &kp C_VOL_UP  &none                &none          &none          &none  &none          &none  &kp LC(LG(Q))
-                &none  &none      &kp LC(LS(LG(N4)))   &kp LS(LG(N4))     &none         &none                &none          &none          &none  &none          &none  &none
-                &none  &kp GLOBE  &kp C_VOICE_COMMAND  &kp LC(LG(SPACE))  &none         &none  &none  &none  &kp LS(LG(O))  &kp LS(LG(M))  &none  &kp LS(LG(K))  &none  &kp LS(LG(H))
-                                  &none                &none              &trans        &trans &trans &trans &trans         &trans         &none  &none
+                &none          &none  &none          &none           &none               &none                   &none   &none         &none                &none              &none  &none
+                &none          &none  &none          &none           &none               &none                   &none   &none         &none                &none              &none  &kp LC(LG(Q))
+                &none          &none  &none          &kp LS(LG(N4))  &kp LC(LS(LG(N4)))  &none                   &none   &kp C_VOL_DN  &kp C_MUTE           &kp C_VOL_UP       &none  &none
+                &kp LS(LG(H))  &none  &kp LS(LG(O))  &kp LS(LG(M))   &kp LS(LG(K))       &none   &none   &none   &none   &kp GLOBE     &kp C_VOICE_COMMAND  &kp LC(LG(SPACE))  &none  &none
+                                      &none          &none           &trans              &trans  &trans  &trans  &trans  &trans        &none                &none
             >;
         };
 
@@ -158,11 +158,11 @@
             display-name = "sys";
 
             bindings = <
-                &bt BT_CLR         &bt BT_SEL 0     &bt BT_SEL 1     &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                             &none  &none  &none  &none  &none        &none
-                &ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                          &none  &none  &none  &none  &none        &none
-                &none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                    &none  &none  &none  &none  &none        &none
-                &sys_reset         &bootloader      &none            &none            &none            &studio_unlock   &rgb_ug RGB_TOG  &none  &none  &none  &none  &none  &bootloader  &sys_reset
-                                                    &none            &none            &none            &none            &none            &none  &none  &none  &none  &none
+                &bt BT_CLR         &bt BT_SEL 0     &bt BT_SEL 1     &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                   &none            &none  &none  &none  &none        &none
+                &ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                &none            &none  &none  &none  &none        &kp C_PWR
+                &none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                          &none            &none  &none  &none  &none        &none
+                &sys_reset         &bootloader      &none            &none            &none            &studio_unlock   &none  &none  &rgb_ug RGB_TOG  &none  &none  &none  &bootloader  &sys_reset
+                                                    &none            &none            &none            &none            &none  &none  &none            &none  &none  &none
             >;
         };
 
@@ -180,16 +180,16 @@
         };
         */
 
-        /* Inactive mirrored right-hand navigation reference.
-        rnav_layer {
-            display-name = "rnav";
+        /* Inactive left-hand navigation reference.
+        lnav_layer {
+            display-name = "lnav";
 
             bindings = <
-                &none          &none      &none      &none      &none      &none                    &kp LS(LA(LEFT))  &kp LA(LEFT)  &kp LG(A)  &kp LA(RIGHT)  &kp LS(LA(RIGHT))  &none
-                &none          &none      &none      &none      &none      &none                    &kp PG_UP         &kp LG(LEFT)  &kp UP     &kp LG(RIGHT)  &none              &kp DEL
-                &none          &kp LCTRL  &kp LALT   &kp LGUI   &kp LSHFT  &none                    &kp PG_DN         &kp LEFT      &kp DOWN   &kp RIGHT      &kp LSHFT          &kp BSPC
-                &kp LS(LG(Z))  &kp LG(Z)  &kp LG(X)  &kp LG(C)  &kp LG(V)  &kp SPACE  &none  &none  &none             &none         &none      &none          &none              &none
-                                          &none      &none      &trans     &trans     &trans &trans &trans            &trans        &none      &none
+                &none          &kp LS(LA(LEFT))  &kp LA(LEFT)  &kp LG(A)  &kp LA(RIGHT)  &kp LS(LA(RIGHT))                  &none   &none      &none     &none     &none      &none
+                &kp DEL        &none             &kp LG(LEFT)  &kp UP     &kp LG(RIGHT)  &kp PG_UP                          &none   &none      &none     &none     &none      &none
+                &kp BSPC       &kp LSHFT         &kp LEFT      &kp DOWN   &kp RIGHT      &kp PG_DN                          &none   &kp RSHFT  &kp RALT  &kp RGUI  &kp RCTRL  &none
+                &kp LS(LG(Z))  &kp LG(Z)         &kp LG(X)     &kp LG(C)  &kp LG(V)      &kp SPACE          &none   &none   &none   &none      &none     &none     &none      &none
+                                                 &none         &none      &trans         &trans             &trans  &trans  &trans  &trans     &none     &none
             >;
         };
         */
