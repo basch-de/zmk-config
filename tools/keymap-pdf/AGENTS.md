@@ -9,7 +9,7 @@ the repository-wide instructions in the root `AGENTS.md`.
   `config/sofle_choc_pro.json` and `config/corne_choc_pro.keymap` with
   `config/corne_choc_pro.json`.
 - The Sofle target validates exactly seven active layers and 60 physical keys.
-- The Corne target currently validates nine active layers and 46 firmware
+- The Corne target currently validates seven active layers and 46 firmware
   positions. Positions 6, 7, 20, and 21 must be omitted from the drawing because
   the target hardware's dual displays prevent switches from being fitted there.
 - Do not report a Piantor PDF as generated or visually verified until explicit

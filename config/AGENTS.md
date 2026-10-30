@@ -66,10 +66,9 @@ repository-wide instructions in the root `AGENTS.md`.
 
 ### Layout design invariants
 
-- The `LNAV` layer provides one-handed navigation on the left half. Its
-  right half is disabled except for explicit right-side modifiers on the
-  home row; its outer column is disabled and its six inner thumb bindings
-  remain transparent.
+- The active `NAV` layer occupies layer 1 and provides navigation on the
+  right half. Its left half contains explicit home-row modifiers and the
+  editing row; its six inner thumb bindings remain transparent.
 - The separate `NUM` layer contains the number pad on the right half. Its left
   half is disabled except for explicit left-side home-row modifiers; its three
   used left thumb positions remain transparent.
@@ -87,13 +86,13 @@ repository-wide instructions in the root `AGENTS.md`.
 - Preserve the matching `&tog NUM` bindings on the `FN_SYM` and `NUM` layers;
   they provide the lock and unlock path for the `NUM` layer.
 - Preserve the one-handed editing row on the outer lower key and `Z`, `X`,
-  `C`, `V`, and `B` in the `LNAV` layer: redo, undo, cut, copy, paste, and
-  Space.
-- Preserve the commented-out `nav_backup_layer` and `rnav_layer` at the end of
+  `C`, `V`, and `B` in the `NAV` and inactive `LNAV` layers: redo, undo,
+  cut, copy, paste, and Space.
+- Preserve the commented-out `nav_backup_layer` and `lnav_layer` at the end of
   the keymap as inactive references while the navigation layers are being
-  redesigned. Neither may receive a layer define or activation binding. The
-  `rnav_layer` mirrors `LNAV` onto the right hand while preserving the spatial
-  meaning of left, right, up, and down.
+  redesigned. Neither may receive a layer define or activation binding.
+- The active `nav_layer` mirrors navigation onto the right hand while
+  preserving the spatial meaning of left, right, up, and down.
 - On the `SYS` layer, preserve the mirrored reset and bootloader positions:
   reset on the outer keys and bootloader on the adjacent inner keys.
 
@@ -162,12 +161,18 @@ Visual representation:
   with switches, leaving 42 usable keys.
 - The separate `corne_choc_pro_5col` target exposes 40 positions and is not the
   target hardware for this migration.
-- The existing nine-layer Corne keymap is a starting point, not a design
-  invariant.
+- The Corne keymap contains seven active layers: macos, num, sym, fn, nav,
+  win, and sys.
 - Do not migrate the Sofle keymap wholesale. Transfer behaviors and layer
   concepts deliberately and recalculate all Corne position lists.
 - Keep the Sofle configuration read-only while the Corne is the target
   keyboard.
+- The Corne `macos` layer maps the Sofle alpha, home, and lower rows onto its
+  three main rows; the Sofle number row and its two bracket inner keys are not
+  part of the Corne base layer.
+- Preserve the separate positional `hml` and `hmr` behaviors. Their Corne
+  trigger lists use the opposite 18-key main half plus all six thumb positions
+  40-45, excluding the four unavailable display positions.
 
 ### Matrix formatting
 

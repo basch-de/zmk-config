@@ -31,7 +31,7 @@ case "$target" in
         ;;
     corne_choc_pro)
         layout_name=default_layout
-        expected_layers=9
+        expected_layers=7
         expected_keys=46
         omitted_positions=6,7,20,21
         ;;
