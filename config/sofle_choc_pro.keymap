@@ -48,32 +48,42 @@
             display-name = "Home-Row-Mod-Right";
         };
 
-        mcw: mod_caps_word {
-            compatible = "zmk,behavior-hold-tap";
-            #binding-cells = <2>;
-            flavor = "hold-preferred";
-            tapping-term-ms = <200>;
-            bindings = <&kp>, <&caps_word>;
-            display-name = "Mod-Caps-Word";
-        };
-
         rlt: repeatable_layer_tap {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
-            quick-tap-ms = <200>;
+            quick-tap-ms = <250>;
             bindings = <&mo>, <&kp>;
             display-name = "Repeatable-Layer-Tap";
         };
 
-        tlh: to_layer_hold {
+        lcw: layer_caps_word {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
-            flavor = "tap-preferred";
+            flavor = "hold-preferred";
             tapping-term-ms = <200>;
-            bindings = <&to>, <&kp>;
-            display-name = "To-Layer-Hold";
+            bindings = <&mo>, <&caps_word>;
+            display-name = "Layer-Caps-Word";
+        };
+
+        hlt: hold_layer_tap {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "hold-preferred";
+            tapping-term-ms = <200>;
+            bindings = <&mo>, <&kp>;
+            display-name = "Hold-Layer-Tap";
+        };
+
+        rhlt: repeatable_hold_layer_tap {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "hold-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <250>;
+            bindings = <&mo>, <&kp>;
+            display-name = "Repeatable-Hold-Layer-Tap";
         };
     };
 };
@@ -86,11 +96,11 @@
             display-name = "macos";
 
             bindings = <
-                &kp GRAVE                  &kp N1        &kp N2       &kp N3       &kp N4        &kp N5                                          &kp N6           &kp N7           &kp N8       &kp N9       &kp N0           &kp MINUS
-                &mt LA(LC(LG(LSHFT))) TAB  &kp Q         &kp W        &kp E        &kp R         &kp T                                           &kp Y            &kp U            &kp I        &kp O        &kp P            &mt LA(LC(LSHFT)) BSLH
-                &mt LGUI ESC               &hml LCTRL A  &hml LGUI S  &hml LALT D  &hml LSHFT F  &kp G                                           &kp H            &hmr RSHFT J     &hmr RALT K  &hmr RGUI L  &hmr RCTRL SEMI  &kp SQT
-                &lt SHORT LG(SPACE)        &kp Z         &kp X        &kp C        &kp V         &kp B         &kp LBKT          &kp RBKT        &kp N            &kp M            &kp COMMA    &kp DOT      &kp FSLH         &kp EQUAL
-                                                         &none        &none        &rlt NUM ESC  &lt NAV RET   &rlt WINDOW BSPC  &rlt NUM SPACE  &rlt FN_SYM RET  &rlt SHORT TAB   &none        &none
+                &kp GRAVE                  &kp N1        &kp N2       &kp N3       &kp N4        &kp N5                                           &kp N6           &kp N7        &kp N8       &kp N9       &kp N0           &kp MINUS
+                &mt LA(LC(LG(LSHFT))) TAB  &kp Q         &kp W        &kp E        &kp R         &kp T                                            &kp Y            &kp U         &kp I        &kp O        &kp P            &mt LA(LC(LSHFT)) BSLH
+                &mt LGUI ESC               &hml LCTRL A  &hml LGUI S  &hml LALT D  &hml LSHFT F  &kp G                                            &kp H            &hmr RSHFT J  &hmr RALT K  &hmr RGUI L  &hmr RCTRL SEMI  &kp SQT
+                &lt SHORT LG(SPACE)        &kp Z         &kp X        &kp C        &kp V         &kp B         &kp LBKT           &kp RBKT        &kp N            &kp M         &kp COMMA    &kp DOT      &kp FSLH         &kp EQUAL
+                                                         &none        &none        &hlt NUM ESC  &hlt NAV TAB  &rhlt WINDOW BSPC  &rlt NUM SPACE  &hlt FN_SYM RET  &lcw SHORT 0  &none        &none
             >;
         };
 
@@ -134,11 +144,11 @@
             display-name = "num";
 
             bindings = <
-                &none  &none      &none     &none     &none      &none                     &kp EQUAL  &kp FSLH  &kp ASTRK  &kp LS(SEMI)   &kp BSPC  &none
-                &none  &none      &none     &none     &none      &none                     &kp N7     &kp N8    &kp N9     &kp MINUS      &kp TAB   &none
-                &none  &kp LCTRL  &kp LGUI  &kp LALT  &kp LSHFT  &none                     &kp N4     &kp N5    &kp N6     &kp PLUS       &kp RET   &none
-                &none  &none      &none     &none     &none      &tog NUM  &none   &none   &kp N1     &kp N2    &kp N3     &mt DOT COMMA  &kp RET   &none
-                                  &none     &none     &trans     &trans    &trans  &trans  &kp N0     &trans    &none      &none
+                &none  &none      &none     &none     &none      &none                     &none      &none   &none   &none   &none          &none
+                &none  &none      &none     &none     &none      &none                     &kp FSLH   &kp N7  &kp N8  &kp N9  &kp MINUS      &kp EQUAL
+                &none  &kp LCTRL  &kp LGUI  &kp LALT  &kp LSHFT  &none                     &kp ASTRK  &kp N4  &kp N5  &kp N6  &kp PLUS       &kp RET
+                &none  &none      &none     &none     &none      &tog NUM  &none   &none   &kp N0     &kp N1  &kp N2  &kp N3  &mt DOT COMMA  &kp LS(SEMI)
+                                  &none     &none     &trans     &trans    &trans  &trans  &trans     &trans  &none   &none
             >;
         };
 
