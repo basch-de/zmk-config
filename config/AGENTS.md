@@ -144,7 +144,7 @@ Visual representation:
 - Verify all binding matrices against the Sofle matrix rules.
 - Run `../tools/keymap-pdf/generate.sh` from this directory, or
   `./tools/keymap-pdf/generate.sh` from the repository root.
-- Review all generator warnings and visually inspect both generated preview
+- Review all generator warnings and visually inspect all generated preview
   pages.
 
 ## Corne Choc Pro (`corne_choc_pro.keymap`)
@@ -161,8 +161,9 @@ Visual representation:
   with switches, leaving 42 usable keys.
 - The separate `corne_choc_pro_5col` target exposes 40 positions and is not the
   target hardware for this migration.
-- The Corne keymap contains seven active layers: macos, num, sym, fn, nav,
-  win, and sys.
+- The Corne keymap contains eight active layers: macos, num, sym, fn, nav,
+  win, sys, and numpad. The num layer contains a number row and function keys
+  and currently has no activation binding.
 - Do not migrate the Sofle keymap wholesale. Transfer behaviors and layer
   concepts deliberately and recalculate all Corne position lists.
 - Keep the Sofle configuration read-only while the Corne is the target

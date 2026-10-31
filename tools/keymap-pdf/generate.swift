@@ -783,120 +783,31 @@ func drawLayerPanel(
 }
 
 func pageLayouts(layerCount: Int) -> [PageLayout] {
-    if layerCount == 1 {
-        return [
-            PageLayout(
-                panels: [
-                    LayerPanel(layerIndex: 0, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 455)),
-                ],
-                showsLegend: true
-            ),
-        ]
-    }
-
-    if layerCount == 2 {
-        return [
-            PageLayout(
-                panels: [
-                    LayerPanel(layerIndex: 0, rect: CGRect(x: 24, y: 310, width: pageWidth - 48, height: 227)),
-                    LayerPanel(layerIndex: 1, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 212)),
-                ],
-                showsLegend: true
-            ),
-        ]
-    }
-
-    if layerCount == 7 {
-        return [
-            PageLayout(
-                panels: [
-                    LayerPanel(layerIndex: 0, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232)),
-                    LayerPanel(layerIndex: 1, rect: CGRect(x: 24, y: 42, width: 386, height: 247)),
-                    LayerPanel(layerIndex: 2, rect: CGRect(x: 432, y: 42, width: 386, height: 247)),
-                ],
-                showsLegend: false
-            ),
-            PageLayout(
-                panels: [
-                    LayerPanel(layerIndex: 3, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232)),
-                    LayerPanel(layerIndex: 4, rect: CGRect(x: 24, y: 82, width: 386, height: 207)),
-                    LayerPanel(layerIndex: 5, rect: CGRect(x: 432, y: 82, width: 386, height: 207)),
-                ],
-                showsLegend: false
-            ),
-            PageLayout(
-                panels: [
-                    LayerPanel(layerIndex: 6, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 455)),
-                ],
-                showsLegend: true
-            ),
-        ]
-    }
-
-    if layerCount == 6 {
-        return [
-            PageLayout(
-                panels: [
-                    LayerPanel(layerIndex: 0, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232)),
-                    LayerPanel(layerIndex: 1, rect: CGRect(x: 24, y: 42, width: 386, height: 247)),
-                    LayerPanel(layerIndex: 2, rect: CGRect(x: 432, y: 42, width: 386, height: 247)),
-                ],
-                showsLegend: false
-            ),
-            PageLayout(
-                panels: [
-                    LayerPanel(layerIndex: 3, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232)),
-                    LayerPanel(layerIndex: 4, rect: CGRect(x: 24, y: 82, width: 386, height: 207)),
-                    LayerPanel(layerIndex: 5, rect: CGRect(x: 432, y: 82, width: 386, height: 207)),
-                ],
-                showsLegend: true
-            ),
-        ]
-    }
-
-    let firstPageIsLast = layerCount == 3
-    let lowerPanelY: CGFloat = firstPageIsLast ? 82 : 42
-    let lowerPanelHeight: CGFloat = firstPageIsLast ? 207 : 247
-    var pages = [
-        PageLayout(
-            panels: [
-                LayerPanel(layerIndex: 0, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232)),
-                LayerPanel(layerIndex: 1, rect: CGRect(x: 24, y: lowerPanelY, width: 386, height: lowerPanelHeight)),
-                LayerPanel(layerIndex: 2, rect: CGRect(x: 432, y: lowerPanelY, width: 386, height: lowerPanelHeight)),
-            ],
-            showsLegend: firstPageIsLast
-        ),
-    ]
-
-    var layerIndex = 3
-    while layerIndex < layerCount {
-        let remainingLayerCount = layerCount - layerIndex
-        if remainingLayerCount == 1 {
-            pages.append(
-                PageLayout(
-                    panels: [
-                        LayerPanel(layerIndex: layerIndex, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 455)),
-                    ],
-                    showsLegend: true
-                )
-            )
-            layerIndex += 1
-        } else {
-            let isLastPage = remainingLayerCount == 2
-            pages.append(
-                PageLayout(
-                    panels: [
-                        LayerPanel(layerIndex: layerIndex, rect: CGRect(x: 24, y: 310, width: pageWidth - 48, height: 227)),
-                        LayerPanel(layerIndex: layerIndex + 1, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 212)),
-                    ],
-                    showsLegend: isLastPage
-                )
-            )
-            layerIndex += 2
+    return stride(from: 0, to: layerCount, by: 3).map { firstLayer in
+        let count = min(3, layerCount - firstLayer)
+        let isLastPage = firstLayer + count == layerCount
+        let panels: [LayerPanel]
+        switch count {
+        case 1:
+            panels = [
+                LayerPanel(layerIndex: firstLayer, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 455)),
+            ]
+        case 2:
+            panels = [
+                LayerPanel(layerIndex: firstLayer, rect: CGRect(x: 24, y: 310, width: pageWidth - 48, height: 227)),
+                LayerPanel(layerIndex: firstLayer + 1, rect: CGRect(x: 24, y: 82, width: pageWidth - 48, height: 212)),
+            ]
+        default:
+            let lowerY: CGFloat = isLastPage ? 82 : 42
+            let lowerHeight: CGFloat = isLastPage ? 207 : 247
+            panels = [
+                LayerPanel(layerIndex: firstLayer, rect: CGRect(x: 24, y: 305, width: pageWidth - 48, height: 232)),
+                LayerPanel(layerIndex: firstLayer + 1, rect: CGRect(x: 24, y: lowerY, width: 386, height: lowerHeight)),
+                LayerPanel(layerIndex: firstLayer + 2, rect: CGRect(x: 432, y: lowerY, width: 386, height: lowerHeight)),
+            ]
         }
+        return PageLayout(panels: panels, showsLegend: isLastPage)
     }
-
-    return pages
 }
 
 func drawHeader(
