@@ -234,7 +234,7 @@ let keyNames: [String: String] = [
     "EQUAL": "=", "PLUS": "+", "ASTRK": "*", "FSLH": "/", "BSLH": "\\",
     "EXCL": "!", "AT": "@", "HASH": "#", "DLLR": "$", "PRCNT": "%",
     "CARET": "^", "AMPS": "&", "LPAR": "(", "RPAR": ")", "UNDER": "_",
-    "PIPE": "|", "TILDE": "~",
+    "PIPE": "|", "TILDE": "~", "QMARK": "?", "COLON": ":",
     "SEMI": ";", "SQT": "'", "COMMA": ",", "DOT": ".", "LBKT": "[", "RBKT": "]",
     "LBRC": "{", "RBRC": "}",
     "TAB": "Tab", "ESC": "Esc", "BSPC": "Backspace", "DEL": "Delete", "RET": "Enter",

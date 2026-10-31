@@ -161,9 +161,9 @@ Visual representation:
   with switches, leaving 42 usable keys.
 - The separate `corne_choc_pro_5col` target exposes 40 positions and is not the
   target hardware for this migration.
-- The Corne keymap contains eight active layers: macos, num, sym, fn, nav,
-  win, sys, and numpad. The num layer contains a number row and function keys
-  and currently has no activation binding.
+- The Corne keymap contains eight active layers: macos, num, sym, nav, win,
+  short, numpad, and sys. The num layer contains a number row and function keys
+  and is activated by holding the base-layer Tab thumb key.
 - Do not migrate the Sofle keymap wholesale. Transfer behaviors and layer
   concepts deliberately and recalculate all Corne position lists.
 - Keep the Sofle configuration read-only while the Corne is the target
